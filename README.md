@@ -32,7 +32,7 @@
 #### Verfication
 - Make sure you can run the following commands on a terminal
   ```sh
-  st-info --probe [Run this with MCU connected]
+  st-info --probe #[Run this with MCU connected]
   arm-none-eabi-gcc --version
   find --version
   make --version
