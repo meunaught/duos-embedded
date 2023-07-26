@@ -61,7 +61,7 @@
   ```sh
   make clean all flash
   ```
-
+***ST-link may require Superuser permission on MacOS/Linux
 ## Pin Logic
 - Look at the LED-Display so that a small circle appears on your top left corner. 
 - Let's label the pins from left to right 1->2->3->4->5
