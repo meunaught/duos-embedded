@@ -27,7 +27,7 @@ static const int seven[][7] = {
 	{2,7,3,6,1,5,0}
 };
 
-const uint16_t pin_mask_all = (1U << 10) - 1; /* Select all pins from 0 to 7*/
+const uint16_t pin_mask_all = (1U << 10) - 1; /* Select all pins from 0 to 10*/
 
 void module_init(void) {
     RCC->AHB1ENR |= (1<<RCC_AHB1ENR_GPIOCEN_Pos); //Enable clock GPIOC
