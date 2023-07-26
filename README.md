@@ -10,8 +10,8 @@
 
 ### Toolchain
 - Unix-like environment e.g. Linux or MacOS or Git-Bash/WSL on Windows
-- [ARM GNU Toolchain](developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
-- [ST-Link CLI](https://github.com/stlink-org/stlink)
+- [ARM GNU Toolchain]([developer.arm.com/downloads/-/arm-gnu-toolchain-downloads](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
+- [Stlink-tools](https://github.com/stlink-org/stlink)
 - [find](https://www.gnu.org/software/findutils/)
 - [make](https://www.gnu.org/software/make/manual/make.html)
 
@@ -27,7 +27,7 @@
   ```
 - ### Windows
   - It is highly recommended that you use GIT Bash or WSL like environments as  then GNU utils like ```make``` and ```find``` are easily accesible
-  - Download [mingw-w64-i686-arm-none-eabi](developer.arm.com/downloads/-/arm-gnu-toolchain-downloads), [st-Link-tools](https://github.com/stlink-org/stlink/releases), [make](https://gnuwin32.sourceforge.net/packages/make.htm)
+  - Download [mingw-w64-i686-arm-none-eabi](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads), [stlink-x86_64-w64-mingw32](https://github.com/stlink-org/stlink/releases), [make](https://gnuwin32.sourceforge.net/packages/make.htm)
   - Add the downloaded executables to your ```$PATH``` as needed
 
 #### Verfication
