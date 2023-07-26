@@ -26,7 +26,7 @@
   brew install --cask gcc-arm-embedded
   ```
 - ### Windows
-  - IT is highly recommended to use GIT Bash or WSL like environments as  then GNU utils like ```make``` and ```find``` are accesible without hassle
+  - It is highly recommended that you use GIT Bash or WSL like environments as  then GNU utils like ```make``` and ```find``` are accesible without hassle
   - Download GCC for ARM and ST-Link tools as mentioned in toolchain section and add them to your ```$PATH```
 
 #### Verfication
