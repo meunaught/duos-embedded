@@ -1,0 +1,71 @@
+Se7en-Segment-Display-DUOS
+├── Makefile
+├── README.md
+├── doc
+│   └── Readme.txt
+└── src
+    ├── kern
+    │   ├── arch
+    │   │   ├── cm4
+    │   │   │   └── cm4.c
+    │   │   ├── include
+    │   │   │   └── cm4
+    │   │   │       └── cm4.h
+    │   │   └── stm32f446re
+    │   │       ├── dev
+    │   │       │   ├── clock.c
+    │   │       │   ├── gpio.c
+    │   │       │   ├── timer.c
+    │   │       │   └── usart.c
+    │   │       ├── include
+    │   │       │   ├── dev
+    │   │       │   │   ├── clock.h
+    │   │       │   │   ├── gpio.h
+    │   │       │   │   ├── timer.h
+    │   │       │   │   └── usart.h
+    │   │       │   └── sys
+    │   │       │       ├── stm32_peps.h
+    │   │       │       └── stm32_startup.h
+    │   │       ├── linker
+    │   │       │   └── linker.ld
+    │   │       └── sys
+    │   │           └── stm32_startup.c
+    │   ├── include
+    │   │   ├── kern
+    │   │   │   ├── errmsg.h
+    │   │   │   ├── errno.h
+    │   │   │   ├── ktimes.h
+    │   │   │   ├── kunistd.h
+    │   │   │   ├── schedule.h
+    │   │   │   ├── sys_init.h
+    │   │   │   ├── syscall_def.h
+    │   │   │   └── types.h
+    │   │   ├── kfloat.h
+    │   │   ├── kmain.h
+    │   │   ├── kmath.h
+    │   │   ├── kstdio.h
+    │   │   ├── kstring.h
+    │   │   └── syscall.h
+    │   ├── kmain
+    │   │   └── kmain.c
+    │   ├── lib
+    │   │   ├── kfloat.c
+    │   │   ├── kmath.c
+    │   │   ├── kstdio.c
+    │   │   ├── kstring.c
+    │   │   ├── ktimes.c
+    │   │   ├── kunistd.c
+    │   │   └── sys_init.c
+    │   ├── syscall
+    │   │   └── syscall.c
+    │   └── thread
+    │       └── thread.c
+    └── userland
+        ├── include
+        │   ├── times.h
+        │   └── unistd.h
+        └── utils
+            ├── times.c
+            └── unistd.c
+
+23 directories, 45 files
