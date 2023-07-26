@@ -29,25 +29,15 @@
  */
 #include <gpio.h>
 
-GPIO_PinState GPIO_ReadPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_pin) {
-	uint32_t temp = GPIOx->IDR;
-	uint32_t chk = 1 << GPIO_pin;
-	
-	if(temp & chk) {
-		return GPIO_PIN_SET;
-	}
-	return GPIO_PIN_RESET;
-}
-
 void GPIO_WritePin(GPIO_TypeDef *GPIOx,uint16_t GPIO_pin,GPIO_PinState PinState)
 {
-		if (PinState == GPIO_PIN_SET) {
-			GPIOx->BSRR |= (1<<GPIO_pin);
-		}		
-		else if(PinState == GPIO_PIN_RESET) {
-			uint16_t OFFSET = GPIO_pin + (uint16_t) 16;
-			GPIOx->BSRR |= 1 << OFFSET; 
-		}
+	
+	if (PinState == GPIO_PIN_SET) {
+		GPIOx->BSRR |= GPIO_pin;
+	}		
+	else if(PinState == GPIO_PIN_RESET) {
+		GPIOx->BSRR |= (uint32_t) GPIO_pin << 16U; 
+	}
 }
 
 void GPIO_Init(GPIO_TypeDef* GPIOx,GPIO_InitTypeDef *GPIO_Init)
@@ -88,7 +78,7 @@ void GPIO_Init(GPIO_TypeDef* GPIOx,GPIO_InitTypeDef *GPIO_Init)
 			temp |= ((GPIO_Init->Pull) << (pin * 2U)); 
 			GPIOx->PUPDR = temp; 
 		}
-	}	
+	}
 }
 
 
