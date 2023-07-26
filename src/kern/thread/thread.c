@@ -28,5 +28,4 @@
  * SUCH DAMAGE.
  */
 #include <types.h> 
-#include <thread.h>
 
