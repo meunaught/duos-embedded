@@ -27,8 +27,8 @@
   ```
 - ### Windows
   - It is highly recommended that you use GIT Bash or WSL like environments so that GNU utils like ```make``` and ```find``` are better accesible
-  - Download [mingw-w64-i686-arm-none-eabi](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads), [stlink-x86_64-w64-mingw32](https://github.com/stlink-org/stlink/releases), [```make```](https://gnuwin32.sourceforge.net/packages/make.htm)
-  - If you do not use GIT Bash or WSL then you need to download [```find```]([https://www.gnu.org/software/findutils/](https://gnuwin32.sourceforge.net/packages/findutils.htm)) seperately 
+  - Download [mingw-w64-i686-arm-none-eabi](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads), [stlink-x86_64-w64-mingw32](https://github.com/stlink-org/stlink/releases), [make](https://gnuwin32.sourceforge.net/packages/make.htm)
+  - If you do not use GIT Bash or WSL then you need to download [```find```](https://gnuwin32.sourceforge.net/packages/findutils.htm) seperately 
   - Add the downloaded executables to your ```$PATH``` as needed
 
 - ### Verfication
