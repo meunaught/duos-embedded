@@ -38,11 +38,11 @@ clean:
 	$(RM) -rv $(BUILD_DIR)
 
 probe:
-	st-info.exe --probe
+	st-info --probe
 reset:
-	st-info.exe --probe --connect-under-reset
+	st-info --probe --connect-under-reset
 flash:
-	st-flash.exe --reset write $(TARGET_BIN) 0x8000000
+	st-flash --reset write $(TARGET_BIN) 0x8000000
 
 -include $(DEPS)
 
