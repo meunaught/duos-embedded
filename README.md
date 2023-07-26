@@ -27,7 +27,7 @@
   ```
 - ### Windows
   - It is highly recommended that you use GIT Bash or WSL like environments as  then GNU utils like ```make``` and ```find``` are easily accesible
-  - Download [mingw-w64-i686-arm-none-eabi](developer.arm.com/downloads/-/arm-gnu-toolchain-downloads), [st-Link-tools](https://github.com/stlink-org/stlink/releases), [make] (https://gnuwin32.sourceforge.net/packages/make.htm)
+  - Download [mingw-w64-i686-arm-none-eabi](developer.arm.com/downloads/-/arm-gnu-toolchain-downloads), [st-Link-tools](https://github.com/stlink-org/stlink/releases), [make](https://gnuwin32.sourceforge.net/packages/make.htm)
   - Add the downloaded executables to your ```$PATH``` as needed
 
 #### Verfication
