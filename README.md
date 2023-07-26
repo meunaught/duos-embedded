@@ -12,8 +12,8 @@
 - Unix-like environment e.g. Linux or MacOS or Git-Bash/WSL on Windows
 - [ARM GNU Toolchain](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
 - [stlink-tools](https://github.com/stlink-org/stlink)
-- [find](https://www.gnu.org/software/findutils/)
-- [make](https://www.gnu.org/software/make/manual/make.html)
+- [```find```](https://www.gnu.org/software/findutils/)
+- [```make```](https://www.gnu.org/software/make/manual/make.html)
 
 ## Installation
 - ### Ubuntu/Debian
@@ -26,12 +26,12 @@
   brew install --cask gcc-arm-embedded
   ```
 - ### Windows
-  - It is highly recommended that you use GIT Bash or WSL like environments as  then GNU utils like ```make``` and ```find``` are better accesible
-  - Download [mingw-w64-i686-arm-none-eabi](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads), [stlink-x86_64-w64-mingw32](https://github.com/stlink-org/stlink/releases), [make](https://gnuwin32.sourceforge.net/packages/make.htm)
+  - It is highly recommended that you use GIT Bash or WSL like environments so that GNU utils like ```make``` and ```find``` are better accesible
+  - Download [mingw-w64-i686-arm-none-eabi](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads), [stlink-x86_64-w64-mingw32](https://github.com/stlink-org/stlink/releases), [```make```](https://gnuwin32.sourceforge.net/packages/make.htm)
+  - If you do not use GIT Bash or WSL then you need to download [```find```]([https://www.gnu.org/software/findutils/](https://gnuwin32.sourceforge.net/packages/findutils.htm)) seperately 
   - Add the downloaded executables to your ```$PATH``` as needed
-  - If you do not use GIT Bash or WSL then you need to download [find](https://www.gnu.org/software/findutils/) seperately 
 
-#### Verfication
+- ### Verfication
 - Make sure you can run the following commands on a terminal
   ```sh
   st-info --probe #[Run this with MCU connected]
