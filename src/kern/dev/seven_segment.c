@@ -16,6 +16,7 @@
 */
 
 static const int seven[][7] = {
+	{1,2,3,4,5,6,0},
 	{3,6,0,0,0,0,0},
 	{2,3,7,4,5,0,0},
 	{2,3,7,6,5,0,0},
@@ -27,7 +28,7 @@ static const int seven[][7] = {
 	{2,7,3,6,1,5,0}
 };
 
-const uint16_t pin_mask_all = (1U << 10) - 1; /* Select all pins from 0 to 10*/
+const uint16_t pin_mask_all = (1U << 8) - 1; /* Select all pins from 0 to 7*/
 
 void module_init(void) {
     RCC->AHB1ENR |= (1<<RCC_AHB1ENR_GPIOCEN_Pos); //Enable clock GPIOC
@@ -46,13 +47,13 @@ void module_exit(void) {
 }
 
 uint32_t lit_digit(const char d) {
-    int i = d - '0' - 1;
+    int i = d - '0';
     uint16_t pin_mask = 0U;
     for(int j = 0; j < 7; ++j) {
         pin_mask |= (1U << seven[i][j]);
     }
     GPIO_WritePin(GPIOC, pin_mask_all, GPIO_PIN_RESET);
-    if(i < 0 || i >= 9) {
+    if(d < '0' || d > '9') {
         return 1;
     }
     GPIO_WritePin(GPIOC, pin_mask, GPIO_PIN_SET);

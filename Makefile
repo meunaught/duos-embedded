@@ -20,7 +20,9 @@ CPU = cortex-m4
 CFLAGS= -mcpu=$(CPU) -mthumb $(FPU) $(INC_FLAGS) -MMD -MP -std=gnu17 -Wall -O0
 LDFLAGS = -nostdlib -nostartfiles -nodefaultlibs -fno-exceptions -T $(LINKER) -Wl,-Map=$(TARGET_MAP) -O0
 
-.PHONY: all clean probe reset flash
+BUSID = $(shell usbipd.exe wsl list | awk '$$3 ~ /ST-Link/' | awk '{print $$1}') #WSL2
+
+.PHONY: all clean probe reset flash connect
 
 all : $(TARGET_ELF) $(TARGET_BIN)
 
@@ -37,7 +39,9 @@ $(TARGET_BIN) :
 clean:
 	$(RM) -rv $(BUILD_DIR)
 
-probe:
+connect: #WSL2
+	usbipd.exe wsl attach --busid $(BUSID)
+probe: 
 	st-info --probe
 reset:
 	st-info --probe --connect-under-reset

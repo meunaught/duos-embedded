@@ -46,7 +46,7 @@ void kmain(void) {
 	while(1) {
 		char ch = '*';
 		kscanf("%c", &ch);
-		kprintf("\n");
+		kprintf("\n----Received %c----\n", ch);	//Send any alphaebic character to turn off display
 		if(lit_digit(ch)) {
 			kprintf("Display is OFF\n");
 		}

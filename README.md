@@ -20,6 +20,7 @@
   ```sh
   apt install gcc-arm-none-eabi stlink-tools make
   ```
+ 
 - ### MacOS (Preferrably using [brew](https://brew.sh/))
   ```sh
   brew install stlink
@@ -71,5 +72,3 @@
 
 ## Serial Communication
 You may use [Hercules](https://www.hw-group.com/software/hercules-setup-utility), [Serial Monitor](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-serial-monitor) on VS Code or any CLI/GUI tool to send and receive data over USART. 
-
-# License
