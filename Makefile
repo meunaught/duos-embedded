@@ -27,7 +27,7 @@ ifeq ($(DEBUG), 1)
 CFLAGS += -g3 -gdwarf-2
 endif
 
-.PHONY: all clean probe flash connect
+.PHONY: all clean probe flash
 
 all : $(TARGET_ELF) $(TARGET_BIN)
 
@@ -53,8 +53,3 @@ flash:
 
 MKDIR_P ?= mkdir -p
 
-
-#WSL2
-BUSID = $(shell usbipd.exe wsl list | awk '$$3 ~ /ST-Link/' | awk '{print $$1}')
-connect:
-	sudo usbip attach --remote=192.168.31.228 --busid=$(BUSID)

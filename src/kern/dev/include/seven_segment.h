@@ -7,7 +7,7 @@ extern "C" {
 
 void module_init(void); //return 0 for successful otherwise unsuccessfull
 void module_exit(void); //disable or offload the device
-uint32_t lit_digit(char);
+uint32_t lit_digit(const int);
 
 #ifdef __cplusplus
 }

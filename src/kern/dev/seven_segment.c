@@ -46,15 +46,14 @@ void module_exit(void) {
     //pore dekhtesi
 }
 
-uint32_t lit_digit(const char d) {
-    int i = d - '0';
+uint32_t lit_digit(const int i) {
+    GPIO_WritePin(GPIOC, pin_mask_all, GPIO_PIN_RESET);
+    if(i < 0 || i > 9) {
+        return 1;
+    }
     uint16_t pin_mask = 0U;
     for(int j = 0; j < 7; ++j) {
         pin_mask |= (1U << seven[i][j]);
-    }
-    GPIO_WritePin(GPIOC, pin_mask_all, GPIO_PIN_RESET);
-    if(d < '0' || d > '9') {
-        return 1;
     }
     GPIO_WritePin(GPIOC, pin_mask, GPIO_PIN_SET);
     return 0;

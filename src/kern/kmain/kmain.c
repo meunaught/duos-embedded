@@ -44,14 +44,14 @@ void kmain(void) {
 	module_init();
 
 	while(1) {
-		char ch = '*';
-		kscanf("%c", &ch);
-		kprintf("\n----Received %c----\n", ch);	//Send any alphaebic character to turn off display
-		if(lit_digit(ch)) {
+		int d = -1;
+		kscanf("%d", &d);
+		kprintf("\n----Received %d----\n", d);	//Send any alphaebic character to turn off display
+		if(lit_digit(d)) {
 			kprintf("Display is OFF\n");
 		}
 		else {
-			kprintf("%c is now LIT\n", ch);
+			kprintf("%d is now LIT\n", d);
 		}
 
 	}
