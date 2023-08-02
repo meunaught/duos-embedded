@@ -21,7 +21,7 @@ CC = arm-none-eabi-gcc
 FPU = -mfloat-abi=softfp -mfpu=fpv4-sp-d16
 CPU = cortex-m4
 CFLAGS= -mcpu=$(CPU) -mthumb $(FPU) $(INC_FLAGS) -MMD -MP -std=gnu17 -Wall -O0
-LDFLAGS = -nostdlib -nostartfiles -nodefaultlibs -fno-exceptions -T $(LINKER) -Wl,-Map=$(TARGET_MAP) -O0
+LDFLAGS = -lc -nostdlib -nostartfiles -nodefaultlibs -fno-exceptions -T $(LINKER) -Wl,-Map=$(TARGET_MAP) -O0
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -g3 -gdwarf-2

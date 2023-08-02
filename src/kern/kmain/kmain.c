@@ -42,18 +42,10 @@
 void kmain(void) {
 	__sys_init();
 	module_init();
-
 	while(1) {
-		int d = -1;
-		kscanf("%d", &d);
-		kprintf("\n----Received %d----\n", d);	//Send any alphaebic character to turn off display
-		if(lit_digit(d)) {
-			kprintf("Display is OFF\n");
-		}
-		else {
-			kprintf("%d is now LIT\n", d);
-		}
-
+		int now = -1;
+		kscanf("%d", &now);
+		kprintf("MODE7","%d\n", now);
 	}
 }
 

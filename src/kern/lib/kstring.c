@@ -136,3 +136,11 @@ float str2float(uint8_t* buff)
 	}
 	return f;
 }
+
+
+uint32_t __strcmp(const char *str1, const char *str2) {
+	while(*str1 & *str2 & *str1 == *str2) {
+		++str1, ++str2;
+	}
+	return *str1 - *str2;
+}

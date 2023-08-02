@@ -32,6 +32,7 @@
 #include <stm32_peps.h>
 #include <usart.h>
 #include <kstring.h>
+#include <seven_segment.h>
 /**
 * first argument define the type of string to kprintf and kscanf, 
 * %c for charater
@@ -52,6 +53,12 @@ void kprintf(char *format,...)
 	double dval;
 	//uint32_t *intval;
 	va_start(list,format);
+
+	int mode7 = __strcmp(format, "MODE7");
+	if(mode7 == 0) {
+		format = va_arg(list, char *);
+	}
+
 	for(tr = format;*tr != '\0';tr++)
 	{
 		while(*tr != '%' && *tr!='\0')
@@ -67,6 +74,14 @@ void kprintf(char *format,...)
 			UART_SendChar(USART2,i);
 			break;
 		case 'd': i = va_arg(list,int);
+			if(mode7 == 0) {
+				if(lit_digit(i)) {
+					_USART_WRITE(USART2, (uint8_t *) "InvalidInput ");
+				}
+				else {
+					_USART_WRITE(USART2, (uint8_t *) "Now LIT ");
+				}
+			}
 			if(i<0)
 			{
 				UART_SendChar(USART2,'-');
