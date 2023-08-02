@@ -1,0 +1,19 @@
+// Configure debug launch settings
+// Feel free to copy these and modify them for your debugger and MCU
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "STlink Debug",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}/build/duos.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "stutil",
+            "device": "STM32F446RE",
+            "interface": "swd",
+            "runToEntryPoint": "kmain", // else it starts at reset handler - not interested
+            "preLaunchTask": "Build all" // configured in tasks.json
+        }
+    ]
+}

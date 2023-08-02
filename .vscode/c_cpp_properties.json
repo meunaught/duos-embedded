@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "configurationProvider": "ms-vscode.makefile-tools",
+            "compilerPath": "C:/Users/ratingminus/ARM_Dev/arm-gnu-toolchain/bin/arm-none-eabi-gcc",
+            "cStandard": "c17"        
+        }
+    ],
+    "version": 4
+}
