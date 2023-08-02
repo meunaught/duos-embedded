@@ -1,3 +1,9 @@
 {
-    "cortex-debug.variableUseNaturalFormat": false
+    "cortex-debug.variableUseNaturalFormat": true,
+    "files.associations": {
+        "string.h": "c",
+        "kstdio.h": "c",
+        "kstring.h": "c",
+        "seven_segment.h": "c"
+    }
 }
