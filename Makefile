@@ -1,7 +1,7 @@
 # Updated Makefile for DUOS: Last Updated on July 26, 2023
 
 # Debug mode
-DEBUG = 1
+DEBUG = 0
 
 BUILD_DIR ?= build
 TARGET_ELF ?= $(BUILD_DIR)/duos.elf
@@ -27,7 +27,7 @@ ifeq ($(DEBUG), 1)
 CFLAGS += -g3 -gdwarf-2
 endif
 
-.PHONY: all clean probe reset flash connect
+.PHONY: all clean probe flash connect
 
 all : $(TARGET_ELF) $(TARGET_BIN)
 
@@ -53,3 +53,8 @@ flash:
 
 MKDIR_P ?= mkdir -p
 
+
+#WSL2
+BUSID = $(shell usbipd.exe wsl list | awk '$$3 ~ /ST-Link/' | awk '{print $$1}')
+connect:
+	sudo usbip attach --remote=192.168.31.228 --busid=$(BUSID)
