@@ -43,14 +43,10 @@
 - If any of these tools is not accessible or not working properly then fix it first.
 
 
-## Compile, Link, Flash!
-- Check if ST-Link is able to communication with MCU
+## Build & Flash
+- Check if ST-Link is able to communicate with MCU
   ```sh
   make probe
-  ```
-- Reset MCU if necessary
-  ```sh
-  make reset
   ```
 - Build ARM Binary
   ```sh
@@ -60,11 +56,7 @@
   ```sh
   make flash
   ```
-- Ultimate One-liner
-  ```sh
-  make clean all flash
-  ```
-***ST-link may require Superuser permission on MacOS/Linux
+***STlink may require superuser permission on MacOS/Linux
 ## Pin Logic
 - Look at the LED-Display so that a small circle appears on your top left corner. 
 - Let's label the pins from left to right 1->2->3->4->5

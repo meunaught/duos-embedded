@@ -1,9 +1,12 @@
 # Updated Makefile for DUOS: Last Updated on July 26, 2023
 
+# Debug mode
+DEBUG = 1
+
 BUILD_DIR ?= build
-TARGET_ELF ?= $(BUILD_DIR)/DUOS.elf
-TARGET_BIN ?= $(BUILD_DIR)/DUOS.bin
-TARGET_MAP ?= $(BUILD_DIR)/DUOS.map
+TARGET_ELF ?= $(BUILD_DIR)/duos.elf
+TARGET_BIN ?= $(BUILD_DIR)/duos.bin
+TARGET_MAP ?= $(BUILD_DIR)/duos.map
 SRC_DIRS = src/kern src/userland
 
 SRCS := $(shell find $(SRC_DIRS) -name *.c)
@@ -20,7 +23,9 @@ CPU = cortex-m4
 CFLAGS= -mcpu=$(CPU) -mthumb $(FPU) $(INC_FLAGS) -MMD -MP -std=gnu17 -Wall -O0
 LDFLAGS = -nostdlib -nostartfiles -nodefaultlibs -fno-exceptions -T $(LINKER) -Wl,-Map=$(TARGET_MAP) -O0
 
-BUSID = $(shell usbipd.exe wsl list | awk '$$3 ~ /ST-Link/' | awk '{print $$1}') #WSL2
+ifeq ($(DEBUG), 1)
+CFLAGS += -g3 -gdwarf-2
+endif
 
 .PHONY: all clean probe reset flash connect
 
@@ -39,11 +44,7 @@ $(TARGET_BIN) :
 clean:
 	$(RM) -rv $(BUILD_DIR)
 
-connect: #WSL2
-	usbipd.exe wsl attach --busid $(BUSID)
 probe: 
-	st-info --probe
-reset:
 	st-info --probe --connect-under-reset
 flash:
 	st-flash --reset write $(TARGET_BIN) 0x8000000
