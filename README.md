@@ -57,6 +57,10 @@
   make flash
   ```
 ***STlink may require superuser permission on MacOS/Linux
+## Pin Logic
+- Look at the LED-Display so that a small circle appears on your top left corner. 
+- Let's label the pins from left to right 1->2->3->4->5
+- Pin 3 from TOP or BOTTOM side should be connected to GND
 
 ## Serial Communication
 You may use [Hercules](https://www.hw-group.com/software/hercules-setup-utility), [Serial Monitor](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-serial-monitor) on VS Code or any CLI/GUI tool to send and receive data over USART. 
