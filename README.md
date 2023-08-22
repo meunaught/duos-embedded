@@ -5,8 +5,6 @@
 
 ### Hardware
 - [STM32-Neucleo Board](https://www.st.com/en/microcontrollers-microprocessors/stm32f446re.html) 
-- [5161AS-LED-Display](https://www.jameco.com/z/LS-5161AS-Jameco-ValuePro-Red-7-Segment-LED-Display-640nm-0-56-H-Digit-Common-Cathode-Right-Hand-Decimal_2325447.html)
-- Some Jumper Wires
 
 ### Toolchain
 - Unix-like environment e.g. Linux or MacOS or Git-Bash/WSL on Windows
@@ -57,10 +55,6 @@
   make flash
   ```
 ***STlink may require superuser permission on MacOS/Linux
-## Pin Logic
-- Look at the LED-Display so that a small circle appears on your top left corner. 
-- Let's label the pins from left to right 1->2->3->4->5
-- Pin 3 from TOP or BOTTOM side should be connected to GND
 
 ## Serial Communication
 You may use [Hercules](https://www.hw-group.com/software/hercules-setup-utility), [Serial Monitor](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-serial-monitor) on VS Code or any CLI/GUI tool to send and receive data over USART. 
