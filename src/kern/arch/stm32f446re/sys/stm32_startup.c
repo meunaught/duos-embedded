@@ -52,7 +52,7 @@ void Default_Handler(void){
 //2. implement the fault handlers
 void HardFault_Handler(void)
 {
-//	printf("Exception : Hardfault\n");
+	// kprintf("Exception : Hardfault\n");
 	while(1);
 }
 

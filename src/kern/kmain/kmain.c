@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 
+ * Copyright (c) 2022
  * Computer Science and Engineering, University of Dhaka
  * Credit: CSE Batch 25 (starter) and Prof. Mosaddek Tushar
  *
@@ -27,7 +27,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
- 
+
 #include <sys_init.h>
 #include <cm4.h>
 #include <kmain.h>
@@ -35,13 +35,63 @@
 #include <kstring.h>
 #include <stdint.h>
 #include <usart.h>
-#include <gpio.h>
+#include <seven_segment.h>
+#include <sys.h>
+#include <test_interrupt.h>
 
-
-void kmain(void) {
+void kmain(void)
+{
 	__sys_init();
-	while(1) {
+	__SysTick_init(100000000);
 
+	int n = 0;
+	EXTI_Init(GPIOC, 0);
+	while (1)
+	{
+
+		if (n != 6)
+		{
+			kprintf(".........................Lab 2..................\n");
+			kprintf("Press 1: Reboot.........\nPress 2: Enable HardFault.........\nPress 3: Enable SysTick Interrupt.............\nPress 4: Check NVIC Priority.........\nPress 5: Set Base Priority.........\nPress 6: Exit.........\n");
+			kprintf("Enter number:\n");
+			kscanf("%d", &n);
+			kprintf("........................................................................\n");
+		}
+		if (n == 1)
+		{
+			n = 0;
+			reboot();
+		}
+		else if (n == 2)
+		{
+			n = 0;
+			enable_hardfault_event();
+		}
+		else if (n == 3)
+		{
+			n = 0;
+
+			NVIC_SetPriority(SysTick_IRQn, 1);
+			enableSysTickInterrupt();
+			for (int i = 0; i < 1000000; i++);
+		}
+		else if (n == 4)
+		{
+			n = 0;
+			kprintf("EXTI NVIC Priority: %d\n", NVIC_GetPriority(EXTI0_IRQn));
+			kprintf("SysTick NVIC Priority: %d\n", NVIC_GetPriority(SysTick_IRQn));
+			kprintf("BASE Priority: %d\n", Get_BASEPRI_Value());
+		}
+		else if (n == 5)
+		{
+			n = 0;
+			Set_BASEPRI(5);
+		}
+		else if (n == 6)
+		{
+			n = 0;
+			break;
+		}
+		
 	}
 }
-
