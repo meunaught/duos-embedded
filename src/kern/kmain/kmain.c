@@ -45,7 +45,8 @@ void kmain(void)
 	__SysTick_init(100000000);
 
 	int n = 0;
-	EXTI_Init(GPIOC, 0);
+	// module_init();
+	EXTI_Init(GPIOA, 0);
 	while (1)
 	{
 

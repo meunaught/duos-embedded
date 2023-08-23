@@ -37,7 +37,6 @@
 void __sys_init(void)
 {
 	DRV_CLOCK_INIT(); //configure system clock 180 MHz
-	//DRV_GPIO_INIT(GPIOA); //Initialize GPIO 
 	DRV_USART_INIT(USART2); //configure as standard input and output 
 	__enable_fpu(); //enable FPU single precision floating point unit
 	__SysTick_init(10000);	//enable systick for 10ms
@@ -48,5 +47,4 @@ void __sys_init(void)
 	kprintf("OS Version: 1.0\n");
 	kprintf("Time Elapsed %d ms\n",__getTime());
 	kprintf("Mahadi-03 & Joyee-42\n");
-	kprintf("*************************************\r\n");
 }
