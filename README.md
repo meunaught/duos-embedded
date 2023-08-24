@@ -19,7 +19,7 @@
   apt install gcc-arm-none-eabi stlink-tools make
   ```
  
-- ### MacOS (Preferrably using [brew](https://brew.sh/))
+- ### MacOS
   ```sh
   brew install stlink
   brew install --cask gcc-arm-embedded
