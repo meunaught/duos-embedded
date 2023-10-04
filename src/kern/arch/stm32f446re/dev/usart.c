@@ -66,9 +66,14 @@ void UART_SendChar(USART_TypeDef *usart,uint8_t c){
 	while(!(usart->SR & (1<<7)));
 }
 /*****Modify according to your need *****/
-void _USART_WRITE(USART_TypeDef *usart,uint8_t *s)
+int _USART_WRITE(USART_TypeDef *usart,uint8_t *s)
 {
-	while (*s) UART_SendChar(usart,*s++);
+	int len = 0;
+	while (*s) {
+		UART_SendChar(usart,*s++);
+		len++;
+	}
+	return len;
 }
 /*****Modify according to your need *****/
 uint8_t _USART_READ(USART_TypeDef* usart,uint8_t *buff,uint16_t size)
