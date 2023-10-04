@@ -31,6 +31,7 @@
 #ifndef __STM32_STARTUP_H
 #define __STM32_STARTUP_H
 #include <stdint.h>
+#include <syscall_def.h>
 
 #define SRAM_START 0x20000000U
 #define SRAM_SIZE (128*1024) //128KB
@@ -51,6 +52,8 @@ volatile uint32_t _bss_size=0;
 volatile uint32_t _data_size=0;
 volatile uint32_t _text_size=0;
 
+void SVC_Handler_C(unsigned int * svc_args);
+
 void Reset_Handler(void) __attribute__((weak));
 void NMI_Handler(void) __attribute__((weak, alias("Default_Handler")));
 void HardFault_Handler(void) __attribute__((weak));
@@ -59,7 +62,7 @@ void BusFault_Handler(void)__attribute__((weak));
 void UsageFault_Handler(void) __attribute__((weak, alias("Default_Handler")));
 void SVCall_Handler(void) __attribute__((weak));
 void DebugMonitor_Handler(void) __attribute__((weak, alias("Default_Handler")));
-void PendSV_Handler(void) __attribute__((weak, alias("Default_Handler")));
+void PendSV_Handler(void) __attribute__((weak));
 void SysTick_Handler(void) __attribute__((weak));
 void WWDG_Handler(void) __attribute__((weak, alias("Default_Handler")));
 void PVD_Handler(void) __attribute__((weak, alias("Default_Handler")));
@@ -147,7 +150,8 @@ void HDMI_CEC_Handler(void) __attribute__((weak, alias("Default_Handler")));
 void SPDIF_Rx_Handler(void) __attribute__((weak, alias("Default_Handler")));
 void FMPI2C1_Handler(void) __attribute__((weak, alias("Default_Handler")));
 void FMPI2C1_ERR_Handler(void) __attribute__((weak, alias("Default_Handler")));
-uint32_t NVIC_VECTOR[] __attribute__((section (".isr_vector")))={
+
+uint32_t NVIC_VECTOR[] __attribute__((section (".isr_vector"))) = {
 	STACK_START,
 	(uint32_t) &Reset_Handler,
 	(uint32_t) &NMI_Handler,

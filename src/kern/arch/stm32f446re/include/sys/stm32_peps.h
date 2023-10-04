@@ -45,8 +45,6 @@
 #define GPIOF 	((GPIO_TypeDef *)0x40021400)
 #define GPIOG 	((GPIO_TypeDef *)0x40021800)
 #define GPIOH 	((GPIO_TypeDef *)0x40021C00)
-
-
 /**
 * Define USARTx
 **/
@@ -73,53 +71,6 @@
 #define TIM12 	((TIM_TypeDef *)0x40001800)
 #define TIM13 	((TIM_TypeDef *)0x40001C00)
 #define TIM14 	((TIM_TypeDef *)0x40002000)
-
-/**
- * Define RCC_AHB1ENR Register
-**/ 
-
-#define RCC_AHB1ENR_GPIOAEN_Pos            (0U)                                
-#define RCC_AHB1ENR_GPIOAEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOAEN_Pos)   /*!< 0x00000001 */
-#define RCC_AHB1ENR_GPIOAEN                RCC_AHB1ENR_GPIOAEN_Msk             
-#define RCC_AHB1ENR_GPIOBEN_Pos            (1U)                                
-#define RCC_AHB1ENR_GPIOBEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOBEN_Pos)   /*!< 0x00000002 */
-#define RCC_AHB1ENR_GPIOBEN                RCC_AHB1ENR_GPIOBEN_Msk             
-#define RCC_AHB1ENR_GPIOCEN_Pos            (2U)                                
-#define RCC_AHB1ENR_GPIOCEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOCEN_Pos)   /*!< 0x00000004 */
-#define RCC_AHB1ENR_GPIOCEN                RCC_AHB1ENR_GPIOCEN_Msk             
-#define RCC_AHB1ENR_GPIODEN_Pos            (3U)                                
-#define RCC_AHB1ENR_GPIODEN_Msk            (0x1UL << RCC_AHB1ENR_GPIODEN_Pos)   /*!< 0x00000008 */
-#define RCC_AHB1ENR_GPIODEN                RCC_AHB1ENR_GPIODEN_Msk             
-#define RCC_AHB1ENR_GPIOEEN_Pos            (4U)                                
-#define RCC_AHB1ENR_GPIOEEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOEEN_Pos)   /*!< 0x00000010 */
-#define RCC_AHB1ENR_GPIOEEN                RCC_AHB1ENR_GPIOEEN_Msk             
-#define RCC_AHB1ENR_GPIOFEN_Pos            (5U)                                
-#define RCC_AHB1ENR_GPIOFEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOFEN_Pos)   /*!< 0x00000020 */
-#define RCC_AHB1ENR_GPIOFEN                RCC_AHB1ENR_GPIOFEN_Msk             
-#define RCC_AHB1ENR_GPIOGEN_Pos            (6U)                                
-#define RCC_AHB1ENR_GPIOGEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOGEN_Pos)   /*!< 0x00000040 */
-#define RCC_AHB1ENR_GPIOGEN                RCC_AHB1ENR_GPIOGEN_Msk             
-#define RCC_AHB1ENR_GPIOHEN_Pos            (7U)                                
-#define RCC_AHB1ENR_GPIOHEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOHEN_Pos)   /*!< 0x00000080 */
-#define RCC_AHB1ENR_GPIOHEN                RCC_AHB1ENR_GPIOHEN_Msk             
-#define RCC_AHB1ENR_CRCEN_Pos              (12U)                               
-#define RCC_AHB1ENR_CRCEN_Msk              (0x1UL << RCC_AHB1ENR_CRCEN_Pos)     /*!< 0x00001000 */
-#define RCC_AHB1ENR_CRCEN                  RCC_AHB1ENR_CRCEN_Msk               
-#define RCC_AHB1ENR_BKPSRAMEN_Pos          (18U)                               
-#define RCC_AHB1ENR_BKPSRAMEN_Msk          (0x1UL << RCC_AHB1ENR_BKPSRAMEN_Pos) /*!< 0x00040000 */
-#define RCC_AHB1ENR_BKPSRAMEN              RCC_AHB1ENR_BKPSRAMEN_Msk           
-#define RCC_AHB1ENR_DMA1EN_Pos             (21U)                               
-#define RCC_AHB1ENR_DMA1EN_Msk             (0x1UL << RCC_AHB1ENR_DMA1EN_Pos)    /*!< 0x00200000 */
-#define RCC_AHB1ENR_DMA1EN                 RCC_AHB1ENR_DMA1EN_Msk              
-#define RCC_AHB1ENR_DMA2EN_Pos             (22U)                               
-#define RCC_AHB1ENR_DMA2EN_Msk             (0x1UL << RCC_AHB1ENR_DMA2EN_Pos)    /*!< 0x00400000 */
-#define RCC_AHB1ENR_DMA2EN                 RCC_AHB1ENR_DMA2EN_Msk              
-#define RCC_AHB1ENR_OTGHSEN_Pos            (29U)                               
-#define RCC_AHB1ENR_OTGHSEN_Msk            (0x1UL << RCC_AHB1ENR_OTGHSEN_Pos)   /*!< 0x20000000 */
-#define RCC_AHB1ENR_OTGHSEN                RCC_AHB1ENR_OTGHSEN_Msk             
-#define RCC_AHB1ENR_OTGHSULPIEN_Pos        (30U)                               
-#define RCC_AHB1ENR_OTGHSULPIEN_Msk        (0x1UL << RCC_AHB1ENR_OTGHSULPIEN_Pos) /*!< 0x40000000 */
-#define RCC_AHB1ENR_OTGHSULPIEN            RCC_AHB1ENR_OTGHSULPIEN_Msk         
 
 /**
 *

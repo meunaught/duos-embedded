@@ -28,58 +28,9 @@
  * SUCH DAMAGE.
  */
 #include <gpio.h>
-
-void GPIO_WritePin(GPIO_TypeDef *GPIOx,uint16_t GPIO_pin,GPIO_PinState PinState)
+void DRV_GPIO_INIT(GPIO_TypeDef* gpio)
 {
-	
-	if (PinState == GPIO_PIN_SET) {
-		GPIOx->BSRR |= GPIO_pin;
-	}		
-	else if(PinState == GPIO_PIN_RESET) {
-		GPIOx->BSRR |= (uint32_t) GPIO_pin << 16U; 
-	}
+gpio->MODER |= 1<<0;	
 }
-
-void GPIO_Init(GPIO_TypeDef* GPIOx,GPIO_InitTypeDef *GPIO_Init)
-{
-	uint32_t temp;
-	uint32_t pin;
-	uint32_t cur_pin;
-	uint32_t check_pin;
-	
-	for (pin = 0U; pin < GPIO_NUMBER; ++pin){
-		
-		cur_pin = (uint32_t)(1U << pin);
-		check_pin = (uint32_t)(GPIO_Init->Pin) & cur_pin;
-		
-		if(cur_pin == check_pin){
-			
-			/* Set the PIN Mode */
-			temp = GPIOx->MODER;
-			temp &= ~(0x00000003 << (pin * 2U));
-			temp |= ((GPIO_Init->Mode & GPIO_MODE) << (pin * 2U));
-			GPIOx->MODER = temp;
-
-			/* Set the PIN Output Type */
-			temp = GPIOx->OTYPER;
-			temp &= ~(0x00000001 << pin);
-			temp |= (((GPIO_Init->Mode & GPIO_OUTPUT_TYPE) >> 4U) << pin);
-			GPIOx->OTYPER = temp;
-			
-			/* Set the PIN Speed */
-			temp = GPIOx->OSPEEDR;
-			temp &= ~(0x00000003 << (pin * 2U));
-			temp |= ((GPIO_Init->Speed) << (pin * 2U));
-			GPIOx->OSPEEDR = temp;
-			
-			/* Activate the Pull-up or Pull down resistor for the current IO */
-			temp = GPIOx->PUPDR;
-			temp &= ~(0x00000003 << (pin * 2U)); 
-			temp |= ((GPIO_Init->Pull) << (pin * 2U)); 
-			GPIOx->PUPDR = temp; 
-		}
-	}
-}
-
 
 

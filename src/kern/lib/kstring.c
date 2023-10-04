@@ -63,7 +63,7 @@ void __reverse_str(uint8_t* buff)
 		tmp = buff[i];
 		buff[i]=buff[j];
 		buff[j]=tmp;
-		kprintf("%c %c %c\n", tmp,buff[i],buff[j]);
+		// kprintf("%c %c %c\n", tmp,buff[i],buff[j]);
 	}
 }
 
@@ -108,6 +108,7 @@ uint8_t *float2str(float f)
 	}while (d!=0);
 	return (ptr);	
 }
+
 float str2float(uint8_t* buff)
 {
 	float f=0;
@@ -121,7 +122,7 @@ float str2float(uint8_t* buff)
 		j=1;
 		while(buff[i]!='\0')
 		{
-			f=f+(buff[i]-48)/(__pow(10,j));
+			f=f+(float)(buff[i]-'0')/((float)__pow(10,j));
 			j++;
 			i++;
 		}

@@ -31,20 +31,31 @@
 #ifndef __TYPES_H
 #define __TYPES_H
 
-#include <stdint.h>
+// #define 
 
+
+#include <stdint.h>
+#include <kstdio.h>
 /*
 * Task, thread or process header
 */
 typedef struct task_tcb{
 	uint32_t magic_number; //here it is 0xFECABAA0
 	uint16_t task_id; //a unsigned 16 bit integer starting from 1000 
-	void *psp; //task stack pointer or stackframe address
+	uint32_t *psp; //task stack pointer or stackframe address
 	uint16_t status; //task status: running, waiting, ready, killed, or terminated
 	uint32_t execution_time; //total execution time (in ms)
 	uint32_t waiting_time; //total waiting time (in ms)
 	uint32_t digital_sinature; //current value is 0x00000001
+	void (*run)(void);
 } TCB_TypeDef;
 
+typedef struct ready_queue {
+	int size;
+	int max;
+    int st;
+	int ed;
+	TCB_TypeDef *q[10];
+} ReadyQ_TypeDef;
 #endif
 

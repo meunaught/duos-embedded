@@ -143,7 +143,8 @@ void kscanf(char *format,...)
 				break;	
 			case 'f': //floating point number
 				_USART_READ_STR(USART2,buff,50); 
-				*(uint32_t*)va_arg(list,double*)=__str_to_num(buff,10);	
+				// *(uint32_t*)va_arg(list,double*)= str2float(buff);	
+				*(float*)va_arg(list, float*)= str2float(buff);	
 				break;	
 			default: //rest not recognized
 				break;

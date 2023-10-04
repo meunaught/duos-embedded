@@ -29,51 +29,79 @@
  */
  
 #include <stm32_startup.h>
-void Reset_Handler(void){
-	uint32_t size = (uint32_t)&_edata - (uint32_t)&_sdata;
-	uint8_t *pDst = (uint8_t*)&_sdata;
-	uint8_t *pSrc = (uint8_t*)&_la_data;
-	for(uint32_t i=0;i<size;i++){
-		*pDst++ = *pSrc++;
-	}
-	size = (uint32_t)&_ebss - (uint32_t)&_sbss;
-	pDst = (uint8_t*)&_sbss;
-	for(uint32_t i=0;i<size;i++){
-		*pDst++ = 0;
-	}
-	_text_size = (uint32_t)&_etext - (uint32_t)&_stext;
-	_data_size = (uint32_t)&_edata - (uint32_t)&_sdata;
-	_bss_size = (uint32_t)&_ebss - (uint32_t)&_sbss;
-	kmain();
+#include <kstdio.h>
+#include <syscall.h>
+
+void Reset_Handler(void) {
+    uint32_t size = (uint32_t)&_edata - (uint32_t)&_sdata;
+    uint8_t *pDst = (uint8_t*)&_sdata;
+    uint8_t *pSrc = (uint8_t*)&_la_data;
+    for(uint32_t i=0;i<size;i++){
+        *pDst++ = *pSrc++;
+    }
+    size = (uint32_t)&_ebss - (uint32_t)&_sbss;
+    pDst = (uint8_t*)&_sbss;
+    for(uint32_t i=0;i<size;i++){
+        *pDst++ = 0;
+    }
+    _text_size = (uint32_t)&_etext - (uint32_t)&_stext;
+    _data_size = (uint32_t)&_edata - (uint32_t)&_sdata;
+    _bss_size = (uint32_t)&_ebss - (uint32_t)&_sbss;
+    kmain();
 }
+
 void Default_Handler(void){
-	while(1);
+    while(1);
 }
+
 //2. implement the fault handlers
-void HardFault_Handler(void)
-{
-//	printf("Exception : Hardfault\n");
-	while(1);
+void HardFault_Handler(void) {
+    kprintf("Exception : HardFault\n");
+    __asm volatile ("BKPT 1");
+    while(1);
 }
 
 
-void MemManage_Handler(void)
-{
-//	printf("Exception : MemManage\n");
-	while(1);
+void MemManage_Handler(void) {
+    kprintf("Exception : MemManage\n");
+    while(1);
 }
 
-void BusFault_Handler(void)
-{
-//	printf("Exception : BusFault\n");
-	while(1);
+void BusFault_Handler(void) {
+    kprintf("Exception : BusFault\n");
+    while(1);
 }
 
-void SVCall_Handler(void){
-/* Write code for SVC handler */
-/* the handler function evntually call syscall function with a call number */
-
-
+__attribute__((naked)) void SVCall_Handler(void) {
+    __asm volatile ("TST LR, #4");
+    __asm volatile ("ITE EQ");
+    __asm volatile ("MRSEQ R0, MSP"); // if 0, stacking used MSP, copy to R0
+    __asm volatile ("MRSNE R0, PSP"); // if 1, stacking used PSP, copy to R0
+    __asm volatile ("MOV R1, R0");
+    __asm volatile ("B SVC_Handler_C");
 }
 
+void SVC_Handler_C(unsigned int * svc_args) {
+    uint8_t svc_number;
+    uint32_t stacked_r[5], lr, pc, xpsr;
 
+    // Stack frame contains:
+    // r0, r1, r2, r3, r12, r14, the return address and xPSR
+    // __asm volatile ("BKPT 5");
+    stacked_r[0] = svc_args[0];
+    stacked_r[1] = svc_args[1];
+    stacked_r[2] = svc_args[2];
+    stacked_r[3] = svc_args[3];
+
+    stacked_r[4] = svc_args[4];
+
+    lr = svc_args[5];
+    pc = svc_args[6];
+    xpsr = svc_args[7];
+
+    svc_number = ((char *) pc)[-2]; //Memory[(Stacked PC)-2]
+    __asm volatile("PUSH {LR}");
+    syscall(svc_number);
+
+    __asm volatile("POP {LR}");
+}
