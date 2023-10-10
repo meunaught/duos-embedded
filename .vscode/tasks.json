@@ -8,7 +8,13 @@
             "group": "build",
             "type": "shell",
             "command": "make",
-            "args": ["clean"]
+            "args": ["clean"],
+            "presentation": {
+                "reveal": "silent",
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
         },
         {
             "label": "Build all",
@@ -16,6 +22,12 @@
             "type": "shell",
             "command": "make",
             "args": ["all"],
+            "presentation": {
+                "reveal": "silent",
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            },
         },
         {
             "label": "STflash",
@@ -27,7 +39,12 @@
             "command": "make",
             "args": ["flash"],
             "dependsOn":["Build clean", "Build all"],
-            "dependsOrder": "sequence"
+            "dependsOrder": "sequence",
+            "presentation": {
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": true
+            }
         }
     ]
 }

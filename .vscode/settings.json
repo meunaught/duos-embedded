@@ -4,6 +4,10 @@
         "string.h": "c",
         "kstdio.h": "c",
         "kstring.h": "c",
-        "seven_segment.h": "c"
+        "seven_segment.h": "c",
+        "gpio.h": "c",
+        "schedule.h": "c",
+        "sys.h": "c",
+        "stm32_startup.h": "c"
     }
 }

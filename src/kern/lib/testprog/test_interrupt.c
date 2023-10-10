@@ -6,7 +6,7 @@ volatile int hardfault_event_enabled = 0;    // Volatile to prevent optimization
 
 void enable_hardfault_event(void)
 {
-      //SCB->SHCSR |= (1 << 16);               // Enable UsageFault handler
+      SCB->SHCSR |= (1 << 16);               // Enable UsageFault handler
       volatile int *ptr = (int *)0xFFFFFFFF; // Invalid memory address
       int value = *ptr;                      // This will trigger a HardFault
 }

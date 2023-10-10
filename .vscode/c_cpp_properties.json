@@ -9,7 +9,6 @@
             "cStandard": "c17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-gcc-arm",
-            "compilerPath": "c:/arm-gnu-toolchain/bin/arm-none-eabi-gcc",
             "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],

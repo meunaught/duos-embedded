@@ -29,6 +29,8 @@
  */
  
 #include <stm32_startup.h>
+#include <cm4.h>
+
 void Reset_Handler(void){
 	uint32_t size = (uint32_t)&_edata - (uint32_t)&_sdata;
 	uint8_t *pDst = (uint8_t*)&_sdata;
@@ -50,10 +52,15 @@ void Default_Handler(void){
 	while(1);
 }
 //2. implement the fault handlers
-void HardFault_Handler(void)
-{
-	// kprintf("Exception : Hardfault\n");
-	while(1);
+void HardFault_Handler(void) {
+    // Read the HardFault status and other relevant registers for debugging.
+    uint32_t cfsr = SCB->CFSR;
+    uint32_t hfsr = SCB->HFSR;
+    uint32_t mmfar = SCB->MMFAR;
+    uint32_t bfar = SCB->BFAR;
+
+    // we may log the HardFault information.
+    while (1);  // You can either halt the CPU or perform error recovery here.
 }
 
 
