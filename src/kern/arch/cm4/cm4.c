@@ -32,7 +32,7 @@
 #include <clock.h>
 #include <syscall.h>
 volatile static uint32_t __mscount;
-volatile static int pend_task = 0;
+extern volatile int pend_task = 0;
 /************************************************************************************
 * __SysTick_init(uint32_t reload) 
 * Function initialize the SysTick clock. The function with a weak attribute enables 

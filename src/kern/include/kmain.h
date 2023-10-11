@@ -31,15 +31,8 @@
 #ifndef __KMAIN_H
 #define __KMAIN_H
 
-#include <sys_init.h>
-#include <cm4.h>
-#include <kstdio.h>
-#include <types.h>
-#include <unistd.h>
-#include <schedule.h>
 
-
-#define MAX_TASKS   5
+#define MAX_TASKS   20
 
 /* some stack memory calculations */
 #define SIZE_TASK_STACK          1024U
@@ -52,18 +45,9 @@
 #define KERNEL_STACK_START       SRAM_END // main stack
 #define KERNEL_STACK_SIZE        ( (4) * (1024) ) // 4KB
 #define KERNEL_STACK_END         ( (KERNEL_STACK_START) - (KERNEL_STACK_SIZE) ) 
-
 #define TASK_STACK_START         KERNEL_STACK_END
 #define TASK_STACK_SIZE          ( (1) * (1024) ) // 1KB
 
-// /*
-// #define T1_STACK_START           SRAM_END
-// #define T2_STACK_START           ( (SRAM_END) - (1 * SIZE_TASK_STACK) )
-// #define T3_STACK_START           ( (SRAM_END) - (2 * SIZE_TASK_STACK) )
-// #define T4_STACK_START           ( (SRAM_END) - (3 * SIZE_TASK_STACK) )
-// #define IDLE_STACK_START         ( (SRAM_END) - (4 * SIZE_TASK_STACK) )
-// #define SCHED_STACK_START        ( (SRAM_END) - (5 * SIZE_TASK_STACK) )
-// */
 
 #define TICK_HZ 1000U
 

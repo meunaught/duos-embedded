@@ -34,9 +34,22 @@
 #define STDIN_FILENO  0      /* Standard input */
 #define STDOUT_FILENO 1      /* Standard output */
 #define STDERR_FILENO 2      /* Standard error */
+#include <kstdio.h>
+#include <dev_table.h>
+#include <kstring.h>
+#include <cm4.h>
+#include <stm32_peps.h>
+#include <usart.h>
+void __sys_open(char *,uint8_t,uint32_t *);
+void __sys_close(uint32_t *);
+void __sys_reboot(void);
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdarg.h>
+void __sys_read(uint8_t,char **,uint32_t);
+void __sys_write(uint8_t fd,char *data);
+
+void __sys_start_task(uint32_t);
+void __sys_getpid(unsigned int *val,uint16_t value);
+
+void __sys_get_time(uint32_t *time);
 #endif /* KERN_UNISTD_H */
 

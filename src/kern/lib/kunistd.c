@@ -28,5 +28,85 @@
  * SUCH DAMAGE.
  */
 #include <kunistd.h>
+#include <kstring.h>
+#include <dev_table.h>
+#include <stm32_peps.h>
+#include <cm4.h>
 /* Add your functions here */
+// extern uint32_t device_count;
 
+void __sys_start_task(uint32_t psp){
+	__asm volatile ("MOV R0, %0"
+		:
+		:"r" (psp)
+	);
+	__asm volatile ("LDMIA R0!,{R4-R11}");
+	__asm volatile ("MSR PSP, R0");
+	__asm volatile ("ISB 0xf" ::: "memory");
+	__asm volatile ("MOV LR, 0xFFFFFFFD");
+	__asm volatile ("BX LR");
+}
+
+void __sys_open(char *name,uint8_t t_access, uint32_t *t_addr){
+    strcpy(device_list[device_count].name,name);
+    device_list[device_count].t_ref++;
+    device_list[device_count].t_access = t_access;
+    device_list[device_count].t_addr = t_addr;
+    device_count++;
+}
+
+void __sys_close(uint32_t *t_addr){
+    uint32_t delete_index = -1;
+    for (int i = 0; i < device_count; i++){
+        if (device_list[i].t_addr == t_addr){
+            device_list[i].t_ref--;
+            if (device_list[i].t_ref == 0){
+                delete_index = i;
+            }
+        }
+    }
+    if (delete_index != -1){
+        for (int i = delete_index; i < device_count - 1; i++){
+            device_list[i] = device_list[i+1];
+        }
+        device_count--;
+    }
+}
+
+void __sys_reboot(void){
+    kprintf("rebooting...");
+    SCB->AIRCR = (0x05FA << 16) | (1 << 2);
+    while(1);
+}
+
+void __sys_read(uint8_t fd,char **data,uint32_t size){
+    switch(fd)
+    {
+        case STDIN_FILENO:
+            char temp[size];
+            uint8_t *buff;
+            _USART_READ(USART2,&buff,size);
+            strcpy(temp,&buff);
+            *data = temp;
+            break;
+    }
+}
+void __sys_write(uint8_t fd,char *data){
+    switch(fd)
+    {
+        case STDOUT_FILENO:
+            _USART_WRITE(USART2,data);
+            break;
+    }
+}
+
+void __sys_getpid(unsigned int *val,uint16_t value)
+{
+	*val = value;
+	return ;
+}
+
+void __sys_get_time(uint32_t *time){
+    *time = __getTime();
+    // TODO
+}

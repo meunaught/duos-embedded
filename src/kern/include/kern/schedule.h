@@ -30,11 +30,6 @@
  
 #ifndef __SCHEDULE_H
 #define __SCHEDULE_H
-#include <types.h>
-#include <stdint.h>
-#include <cm4.h>
-#include <kmain.h>
-
 #define DUMMY_XPSR  0x01000000U
 
 #define READY 1
@@ -42,20 +37,22 @@
 #define TERMINATED 3
 #define KILLED 4
 
-void _schedule(void);
+#define MAX_TASK 20
+#include <types.h>
+#include <unistd.h>
 
-//task related functions
-uint16_t generate_task_id(void);
-void task_create(TCB_TypeDef *tcb, void (*task_func)(void), uint32_t *stack);
-void task_start(void);
+void init_queue(void);
+void queue_add(TCB_TypeDef *);
+TCB_TypeDef* pop(void);
 
-// queue related functions
-void initialize_queue(void);
-void add_to_ready_queue(TCB_TypeDef *t);
-TCB_TypeDef *queue_front_(void) ;
-int is_queue_empty(void);
-void set_sleeping_task(TCB_TypeDef *s);
+void __schedule(void);
+void __create_task(TCB_TypeDef *, void(*task)(void), uint32_t *stack_start);
+void __set_sleep(TCB_TypeDef*);
+void start_exec(void);
 
+
+void print_task_info(TCB_TypeDef*);
+void print_entire_queue(void);
 #endif
 
 

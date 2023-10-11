@@ -29,215 +29,122 @@
  */
  
 #include <unistd.h>
+#include <syscall_def.h>
+#include <kstdio.h>
 
-/* Write your highlevel I/O details */
+void fopen(char *name,uint8_t t_access, uint32_t *t_addr){
+	__asm volatile (
+		"mov r0, %[x]\n"
+		"mov r1, %[y]\n"
+		: 
+		: [x] "r" (name), [y] "r" (t_access)
+	);
+	__asm volatile(
+		"mov r2, %[x]\n"
+		:
+		: [x] "r" (t_addr)
+	);
 
-void exit(void) {
-    __asm volatile ("MOV R12, R11");
-    __asm volatile ("SVC #3");
-    yield();
+	__asm volatile ("PUSH {r4-r11, ip, lr}");
+	__asm volatile("svc %0" : : "i" (SYS_open));
+
+	__asm volatile ("POP {r4-r11, ip, lr}");
+
 }
 
-uint16_t getpid(void) {
-    uint16_t pid = 0;
-    __asm volatile ("MOV R12, R11");
-    __asm volatile ("MOV R0, %0" : : "r" (&pid));
-    __asm volatile ("SVC #5");
-    return pid;
+void fclose(uint32_t *t_addr){
+	__asm volatile (
+		"mov r0, %[x]\n"
+		:
+		: [x] "r" (t_addr)
+	);
+	__asm volatile ("PUSH {r4-r11, ip, lr}");
+	__asm volatile("svc %0" : : "i" (SYS_close));
+
+	__asm volatile ("POP {r4-r11, ip, lr}");
 }
 
-// attempts to read up to len bytes, returns the number of bytes read
-int read(uint32_t fd, unsigned char *s, size_t len) {
-    int ret;
-    __asm volatile ("MOV R1, %0" : : "r" (fd));
-    __asm volatile ("MOV R2, %0" : : "r" (s));
-    __asm volatile ("MOV R3, %0" : : "r" (len));
-    __asm volatile ("MOV R12, %0" : : "r" (&ret));
-    __asm volatile("SVC #50");
-    return ret;
+void reboot(void){
+	__asm volatile ("PUSH {r4-r11, ip, lr}");
+	__asm volatile("svc %0" : : "i" (SYS_reboot));
+
+	__asm volatile ("POP {r4-r11, ip, lr}");
 }
 
-int write(uint32_t fd, unsigned char *s, size_t len) {
-    int ret;
-    __asm volatile ("MOV R0, %0" : : "r" (fd));
-    __asm volatile ("MOV R1, %0" : : "r" (s));
-    __asm volatile ("MOV R2, %0" : : "r" (len));
-    __asm volatile ("MOV R12, %0" : : "r" (&ret));
-    __asm volatile("SVC #55");
-    return ret;
+void read(uint8_t fd,char **data,uint32_t size){
+	__asm volatile (
+		"mov r0, %[x]\n"
+		"mov r1, %[y]\n"
+		:
+		: [x] "r" (fd), [y] "r" (data)
+	);
+	__asm volatile (
+		"mov r2, %[x]\n"
+		:
+		: [x] "r" (size)
+	);
+	__asm volatile ("PUSH {r4-r11, ip, lr}");
+	__asm volatile("svc %0" : : "i" (SYS_read));
+
+	__asm volatile ("POP {r4-r11, ip, lr}");
+}
+void write(uint8_t fd,char *data){
+	__asm volatile (
+		"mov r0, %[x]\n"
+		"mov r1, %[y]\n"
+		:
+		: [x] "r" (fd), [y] "r" (data)
+	);
+    __asm volatile("stmdb r13!, {r5}");
+
+	__asm volatile ("PUSH {r4-r11, ip, lr}");
+	__asm volatile("svc %0" : : "i" (SYS_write));
+	__asm volatile ("POP {r4-r11, ip, lr}");
+}
+void yeild(void)
+{
+	__asm volatile("svc %0" : : "i" (SYS_yield));
+
 }
 
-int get_time(void) {
-    unsigned int time = 0;
-    __asm volatile ("MOV R1, %0" : : "r" (&time));
-    __asm volatile ("SVC #113");
-    return (int)(time);
+void task_exit(void)
+{
+    __asm volatile("PUSH {r5}");
+    __asm volatile ("PUSH {r4-r11, ip, lr}");
+	__asm volatile("svc %0" : : "i" (SYS__exit));
+	__asm volatile ("POP {r4-r11, ip, lr}");
+    yeild();
 }
 
-void reboot(void)  {
-    __asm volatile ("SVC #119");
+uint32_t getpid(void)
+{
+    unsigned int pid = 0;
+    __asm volatile("mov r5, %[v]": : [v] "r" (&pid));
+    __asm volatile("PUSH {r5}");
+
+    __asm volatile ("PUSH {r4-r11, ip, lr}");
+	__asm volatile("svc %0" : : "i" (SYS_getpid));
+
+	__asm volatile ("POP {r4-r11, ip, lr}");
+    return (uint16_t) pid;
 }
 
-void yield(void) {
-    __asm volatile ("SVC #120");
+void start_task(uint32_t psp){
+	__asm volatile ("MOV R0, %0"
+		:
+		:"r" (psp)
+	);
+	__asm volatile ("PUSH {r4-r11, ip, lr}");
+	__asm volatile("svc %0" : : "i" (SYS_start));
+	__asm volatile ("POP {r4-r11, ip, lr}");
+
 }
 
-int uprintf(char *format, ...) {
-    char *tr;
-    uint32_t i;
-    uint8_t *str;
-    va_list list;
-    double dval;
-    va_start(list, format);
-    unsigned char result[256];
-    int index = 0;
-    for (tr = format; *tr != '\0'; tr++)
-    {
-        while (*tr != '%' && *tr != '\0')
-        {
-            result[index++] = (uint8_t)*tr;
-            tr++;
-        }
-        if (*tr == '\0')
-            break;
-        tr++;
-        switch (*tr)
-        {
-        case 'c':
-            i = va_arg(list, int);
-            result[index++] = (uint8_t)i;
-            break;
-        case 'd':
-            i = va_arg(list, int);
-            if (i < 0)
-            {
-                result[index++] = (uint8_t)'-';
-                i = -i;
-            }
-            uint8_t *s1 = (uint8_t *)convert(i, 10);
-            while (*s1)
-            {
-                result[index++] = *s1;
-                s1++;
-            }
-
-            break;
-        case 'o':
-            i = va_arg(list, int);
-            if (i < 0)
-            {
-                result[index++] = '-';
-                i = -i;
-            }
-            s1 = (uint8_t *)convert(i, 8);
-            while (*s1)
-            {
-                result[index++] = *s1;
-                s1++;
-            }
-            break;
-        case 'x':
-            i = va_arg(list, int);
-            if (i < 0)
-            {
-                result[index++] = '-';
-                i = -i;
-            }
-            s1 = (uint8_t *)convert(i, 16);
-            while (*s1)
-            {
-                result[index++] = *s1;
-                s1++;
-            }
-            break;
-        case 's':
-            str = va_arg(list, uint8_t *);
-            s1 = (uint8_t *)&str;
-            while (*s1)
-            {
-                result[index++] = *s1;
-                s1++;
-            }
-            break;
-        case 'f':
-            dval = va_arg(list, double);
-            s1 = (uint8_t *)float2str(dval);
-            while (*s1)
-            {
-                result[index++] = *s1;
-                s1++;
-            }
-            break;
-        default:
-            break;
-        }
-    }
-    va_end(list);
-    result[index] = '\0';
-    return write(STDOUT_FILENO, result, index);
+uint32_t get_time(void){
+    uint32_t time = 0;
+	__asm volatile("mov r0, %[x]": : [x] "r" (&time));
+	__asm volatile ("PUSH {r4-r11, ip, lr}");
+	__asm volatile("svc %0" : : "i" (SYS___time));
+	__asm volatile ("POP {r4-r11, ip, lr}");
+	return time;
 }
-
-// returns the number of fields that were successfully converted and assigned
-int uscanf(char *format, ...) {
-    va_list list;
-    char *ptr;
-    int conversion_count = 0;
-    uint8_t buff[50];
-    ptr=format;
-    va_start(list,format);
-    
-    while (*ptr)
-    {
-        /* code */
-        if(*ptr == '%') //looking for format of an input
-        {
-            ptr++;
-            switch (*ptr)
-            {
-            case 'c': //charater
-                /* code */
-                read(STDIN_FILENO, buff, 1);
-                *(uint8_t*)va_arg(list,uint8_t*)=buff[0];
-                conversion_count++;
-                break;
-            case 'd': //integer number 
-                // _USART_READ_STR(USART2,buff,50); 
-                read(STDIN_FILENO, buff, 50);
-                *(uint32_t*)va_arg(list,uint32_t*)=__str_to_num(buff,10);	
-                conversion_count++;
-                break;
-            case 's': //need to update -- string
-                // _USART_READ_STR(USART2,buff,50); 
-                read(STDIN_FILENO, buff, 50);
-                *(uint32_t*)va_arg(list,uint32_t*)=__str_to_num(buff,10);	
-                conversion_count++;
-                break;
-            case 'x': //hexadecimal number
-                // _USART_READ_STR(USART2,buff,50); 
-                read(STDIN_FILENO, buff, 50);
-                *(uint32_t*)va_arg(list,uint32_t*)=__str_to_num(buff,16);	
-                conversion_count++;
-                break;	
-            case 'o': //octal number
-                // _USART_READ_STR(USART2,buff,50); 
-                read(STDIN_FILENO, buff, 50);
-                *(uint32_t*)va_arg(list,uint32_t*)=__str_to_num(buff,8);	
-                conversion_count++;
-                break;	
-            case 'f': //floating point number
-                // _USART_READ_STR(USART2,buff,50); 
-                // *(uint32_t*)va_arg(list,double*)= str2float(buff);	
-                read(STDIN_FILENO, buff, 50);
-                *(float*)va_arg(list, float*)= str2float(buff);	
-                conversion_count++;
-                break;	
-            default: //rest not recognized
-                break;
-            }
-        }
-        ptr++;
-    }
-    va_end(list);
-    return conversion_count;
-}
-

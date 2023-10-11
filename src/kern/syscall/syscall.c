@@ -28,126 +28,78 @@
  * SUCH DAMAGE.
 */
 
+
+
+
 #include <syscall.h>
-#include <syscall_def.h>
-#include <errno.h>
-#include <errmsg.h>
-#include <kstdio.h>
-#include <usart.h>
 #include <cm4.h>
-#include <types.h>
 
-void __sys_start_task(void) {
-    __asm volatile ("POP {LR}");
+void syscall(uint32_t *svc_args)
+{
+/* The SVC_Handler calls this function to evaluate and execute the actual function */
+/* Take care of return value or code */
 
-    unsigned int * svc_args;
-    __asm volatile ("MOV %0, R1" : "=r" (svc_args));
-    uint32_t task_psp = svc_args[3];
-    __asm volatile ("MOV R0, %0": :"r"(task_psp));
-
-    __asm volatile ("LDMIA R0!,{R4-R11}");
-    __asm volatile ("MSR PSP, R0");
-    __asm volatile ("ISB");
-
-    __asm volatile ("MOV LR, 0xFFFFFFFD"); //exception return
-    __asm volatile ("BX LR");
+	uint16_t callno = ((char *)svc_args[6])[-2];
+	__asm volatile("PUSH {LR}");
+	switch(callno)
+	{
+		/* Write your code to call actual function (kunistd.h/c or times.h/c and handle the return value(s) */
+		case SYS_open:
+		{
+			kprintf("Will call __sys_open\n");
+			char *device_name = (char *)svc_args[0];
+			uint8_t t_access = (uint8_t)svc_args[1];
+			uint32_t *t_addr = (uint32_t *)svc_args[2];
+			__sys_open(device_name,t_access,t_addr);
+			break;		
+		}
+		case SYS_close:
+		{
+			kprintf("Will call __sys_close\n");
+			uint32_t *t_addr = (uint32_t *)svc_args[0];
+			__sys_close(t_addr);
+			break;
+		}
+		case SYS_read: 
+			kprintf("Will call __sys_read\n");
+			uint8_t fd = (uint8_t)svc_args[0];
+			char **data = (char **)svc_args[1];
+			uint32_t size = (uint32_t)svc_args[2];
+			__sys_read(fd,data,size);
+			break;
+		case SYS_write:
+			fd = (uint8_t)svc_args[0];
+			char *toWrite = (char *)svc_args[1];
+			__sys_write(fd,toWrite);
+			break;
+		case SYS_start:
+			uint32_t psp = (uint32_t)svc_args[0];
+			__sys_start_task(psp);
+			break;
+		case SYS_yield:
+			kprintf("SYS_yeild calling\n");
+			SCB->ICSR |= (1 << 28); // set PendSV bit
+			break;				
+		case SYS__exit:
+			TCB_TypeDef* task = svc_args[16];
+			task->status = KILLED;
+			break;
+		case SYS_getpid:
+			uint32_t pid = svc_args[10];	
+			task = svc_args[16];
+			__sys_getpid((unsigned int *)pid,task->task_id);
+			break;
+		case SYS_reboot:
+			kprintf("Will call __sys_reboot\n");
+			__sys_reboot();
+			break;	
+		case SYS___time:
+			uint32_t time = svc_args[0];
+			__sys_get_time((uint32_t *)time);
+			break;
+		default: ;
+	}
+	__asm volatile("POP {LR}");
+/* Handle SVC return here */
 }
 
-void __sys_getpid(void) {
-    unsigned int * svc_args;
-    __asm volatile ("MOV %0, R1" : "=r" (svc_args));
-    *( (unsigned int *) svc_args[0] ) = (*((TCB_TypeDef*)svc_args[4])).task_id;
-    return;
-}
-
-void __sys_exit(void) {
-    unsigned int * svc_args;
-    __asm volatile ("MOV %0, R1" : "=r" (svc_args));
-    
-    (*((TCB_TypeDef*)svc_args[4])).status = 4;
-    return;
-}
-
-void __sys_read(void) {
-    unsigned int * svc_args;
-    __asm volatile ("MOV %0, R1" : "=r" (svc_args) : );
-
-    int *bytes_read = (int *)svc_args[4]; //R12
-    int len = (int)svc_args[3]; //R3
-    unsigned char* buff = (unsigned char*)svc_args[2];
-
-    if(len == 1) {
-        buff[0] = UART_GetChar(USART2);
-        *bytes_read = 1;
-    } 
-    else {
-        *bytes_read = _USART_READ_STR(USART2,buff,50);
-    }
-    return;
-}
-
-void __sys_write(void) {
-    unsigned char *s;
-    unsigned int * svc_args;
-    __asm volatile ("MOV %0, R1" : "=r" (svc_args) : );
-    s = (unsigned char *)svc_args[1]; //R1
-    int len = _USART_WRITE(USART2, s);
-    *((int*)svc_args[4]) = len;
-    return;
-}
-
-void __sys_gettime(void) {
-    unsigned int * svc_args;
-    __asm volatile ("MOV %0, R1" : "=r" (svc_args) : );
-    *( (unsigned int *) svc_args[1] ) = __getTime(); //R1
-}
-
-void __sys_reboot(void) {
-    kprintf("rebooting...");
-    SCB->AIRCR = (0x05FA << 16) | (1 << 2);
-
-    while(1);
-}
-
-void __sys_yield(void) {
-    SCB->ICSR |= (1 << 28);
-}
-
-void syscall(uint16_t callno) {
-    /* The SVC_Handler calls this function to evaluate and execute the actual function */
-    /* Take care of return value or code */
-    switch(callno) {
-        /* Write your code to call actual function (kunistd.h/c or times.h/c and handle the return value(s) */
-        case SYS_read: 
-            __sys_read();
-            break;
-        case SYS_write:
-            __sys_write();
-            break;
-        case SYS_reboot:
-            __sys_reboot();
-            break;	
-        case SYS__exit:
-            __sys_exit();
-            break;
-        case SYS_getpid:
-            __sys_getpid();
-            break;
-        case SYS___time:
-            __sys_gettime();
-            break;
-        case SYS_yield:
-            __sys_yield();
-            break;	
-        case SYS_start_task:
-            __sys_start_task();
-            break;			
-        /* return error code see error.h and errmsg.h ENOSYS sys_errlist[ENOSYS]*/	
-        default: 
-            // return some negative value in r0
-            break;
-    }
-
-    __asm volatile ("POP {LR}");
-    /* Handle SVC return here */
-}

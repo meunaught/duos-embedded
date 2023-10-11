@@ -1,129 +1,137 @@
 #include <schedule.h>
-#include <types.h>
+#include <cm4.h>
+ReadyQ_TypeDef queue;
 
-ReadyQ_TypeDef rq;
-TCB_TypeDef *current, *__sleep;
+TCB_TypeDef *current_task,*sleep_task;
+uint32_t TASK_ID = 1000;
 
-void set_sleeping_task(TCB_TypeDef *s) {
-    __sleep = s;
+void init_queue(void){
+	queue.size = 0;
+	queue.max = MAX_TASK;
+	queue.st = 0;
+	queue.ed = -1;
+}
+
+void queue_add(TCB_TypeDef *task){
+	if (queue.size == queue.max){
+		return;
+	}
+	queue.ed = (queue.ed + 1) % queue.max;
+	queue.q[queue.ed] = task;
+	queue.size++;
+}
+TCB_TypeDef* pop(){
+	if (queue.size == 0){
+		queue_add(sleep_task);
+	}
+
+	TCB_TypeDef *task = queue.q[queue.st];
+	queue.st = (queue.st + 1) % queue.max;
+	queue.size--;
+	return task;
+}
+
+//-------------scheduling functions----------------
+
+void __schedule(void){
+    if(current_task->status == RUNNING){
+        current_task->status = READY;
+        queue_add(current_task);
+    }
+
+    TCB_TypeDef *front = pop();
+	current_task = front;
+    current_task->status = RUNNING;
     return;
 }
 
-void task_start(void) {
-    if(is_queue_empty() == 0) {
-        kprintf("There is no task in the queue to start\n\r");
-        return;
+void __create_task(TCB_TypeDef *tcb, void(*task)(void), uint32_t *stack_start){
+	tcb->magic_number = 0xFECABAA0;
+	tcb->task_id = TASK_ID++;
+	tcb->status = READY;
+	tcb->execution_time = 0;
+	tcb->waiting_time = 0;
+	tcb->digital_sinature = 0x00000001;
+	
+
+	tcb->psp = stack_start;
+	*(--tcb->psp) = DUMMY_XPSR; //xPSR
+	*(--tcb->psp) = (uint32_t)task; //PC
+	*(--tcb->psp) = 0xFFFFFFFD; //LR
+	
+	//store R0 - R3, R12
+	for(int i = 0; i < 5; i++) *(--tcb->psp) = 0x00000000;
+	*(--tcb->psp) = (uint32_t)tcb;
+	//store R4 - R10
+	for(int i = 0; i < 7; i++) *(--tcb->psp) = 0x00000000;
+}
+
+
+void start_exec(void){
+	if(queue.size == 0)return;
+	current_task = pop(); 
+	if(current_task->magic_number != 0xFECABAA0
+	|| current_task->digital_sinature != 0x00000001){
+		kprintf("Invalid task\n");
+		return;
+	}
+	current_task->status = RUNNING;
+	start_task(current_task->psp);
+}
+
+void __set_sleep(TCB_TypeDef *task){
+	sleep_task = task;
+	return;
+}
+
+void __attribute__((naked)) PendSV_Handler(void){
+	//Clear all pending interrupts
+	uint32_t x;
+	SCB->ICSR |= (1<<27);
+
+	//save current context
+	__asm volatile(
+		"mrs r0, psp\n"
+		"stmdb r0!, {r4-r11}\n"
+		"push {lr}\n"
+	);
+
+	__asm volatile("mov %0, r0" 
+		: "=r" (current_task->psp)
+		:
+	);
+	//Schedule next task
+	__schedule();
+
+	__asm volatile(
+		"mov r0, %0" 
+		: 
+		:"r"(current_task->psp)
+	);
+	__asm volatile(
+		"ldmia r0!,{r4-r11}\n"
+		"msr psp, r0\n"
+		"pop {lr}\n"
+		"bx lr\n"
+	);
+}
+
+
+void print_entire_queue(void){
+    kprintf("Printint entire queue ___________\n");
+    kprintf("Queue size = %d\n",queue.size);
+    kprintf("Queue max = %d\n",queue.max);
+    kprintf("Queue st = %d\n",queue.st);
+    kprintf("Queue ed = %d\n",queue.ed);
+
+    for (int i = 0;i < queue.size;i++){
+        kprintf("Queue q[%d] = %x\n",i,queue.q[i]);
+        print_task_info(queue.q[i]);
     }
-    TCB_TypeDef *qf = queue_front_();
-    current = qf;
-    current->status = RUNNING;
-    __asm volatile ("MOV R12, %0" : : "r"(qf->psp));
-    //calls SYS_start_task from syscall
-    __asm volatile ("SVC #121");
+    kprintf("END QUEUE PRINT ___________\n");
 }
-
-void initialize_queue(void) {
-    rq.max = 5;
-    rq.size = 0;
-    rq.st = 0;
-    rq.ed = -1;    
-}
-
-void add_to_ready_queue(TCB_TypeDef *t) {
-    if(rq.max >= rq.size + 1) {
-        rq.ed = (rq.ed + 1) % rq.max ;
-        rq.q[rq.ed] = t;
-        rq.size++;
-    } 
-    else {
-        kprintf("The ready queue is full, thus the task could not be added\n\r");
-    }
-}
-
-TCB_TypeDef *queue_front_(void) {
-    if(is_queue_empty() == 0) {
-        add_to_ready_queue(__sleep);
-    }
-    int front = rq.st;
-    rq.st = (rq.st + 1) % rq.max;
-    rq.size--;
-    return *((rq.q) + front);
-}
-
-int is_queue_empty(void) {
-    return rq.size;
-}
-
-const uint16_t initial_task_id = 1000;
-uint16_t last_assigned = initial_task_id;
-
-// Generate a unique ID for the task
-uint16_t generate_task_id(void) {
-    return last_assigned++;
-} 
-
-void task_create(TCB_TypeDef *tcb, void (*task_func)(void), uint32_t *stack) {
-    // Initialize the TCB fields
-    tcb->magic_number = 0xFECABAA0;
-
-    // Generate a unique ID for the task
-    tcb->task_id = generate_task_id();
-    tcb->status = READY;
-    // Initialize the stack for the task
-    tcb->run = task_func;
-    // Point to the top of the stack
-    tcb->psp = stack;
-
-    *(--tcb->psp) = DUMMY_XPSR;  // xPSR
-    *(--tcb->psp) = (uint32_t) task_func;  // PC (task entry point)
-    *(--tcb->psp) = 0xFFFFFFFD;  // LR Exception return table
-    
-    *(--tcb->psp) = 0x0000000;  // R12 - storing actual object address in here
-    *(--tcb->psp) = 0x0000000;  // R3
-    *(--tcb->psp) = 0x0000000;  // R2
-    *(--tcb->psp) = 0x0000000;  // R1
-    *(--tcb->psp) = 0x0000000;  // R0
-    
-    // initializing registers r11 to r4
-    for(int i = 0; i < 8; i++) {
-        if(i == 0) {
-            *(--tcb->psp) = (uint32_t) tcb;
-        } else {
-            *(--tcb->psp) = 0x0000000;
-        }
-    }
-}
-
-void _schedule(void) {
-    if(current->status == RUNNING) {
-        current->status = READY;
-        add_to_ready_queue(current);
-    } 
-    TCB_TypeDef *qf = queue_front_();
-    current = qf;
-    current->status = RUNNING;
-    return;
-}
-
-void __attribute__((naked)) PendSV_Handler(void) {
-    SCB->ICSR |= (1 << 27);
-    /* Save current context */
-
-    // Get current process stack pointer value
-    __asm volatile("MRS R0,PSP");
-    // Save R4 to R11 in task stack (8 regs)
-    __asm volatile("STMDB R0!,{R4-R11}");
-    __asm volatile("PUSH {LR}");
-    // Save current psp value
-    __asm volatile ("MOV %0, R0": "=r"( current->psp ): );
-
-    _schedule();
-
-    // Get new task psp value
-    __asm volatile ("MOV R0, %0" : : "r"(current->psp));
-    // Load R4 to R11 from taskstack (8 regs)
-    __asm volatile ("LDMIA R0!,{R4-R11}");
-    __asm volatile("MSR PSP,R0");
-    __asm volatile("POP {LR}");
-    __asm volatile("BX LR");
+void print_task_info(TCB_TypeDef *task){
+	kprintf("_____________TASK INFO_____________\n");
+	kprintf("Task ID = %d\n",task->task_id);
+	kprintf("\n");
 }

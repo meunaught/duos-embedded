@@ -137,3 +137,12 @@ float str2float(uint8_t* buff)
 	}
 	return f;
 }
+
+void strcpy(uint8_t *buff1, uint8_t *buff2){
+	uint32_t i=0;
+	while(buff2[i]!='\0'){
+		buff1[i]=buff2[i];
+		i++;
+	}
+	buff1[i]='\0';
+}

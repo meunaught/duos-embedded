@@ -81,27 +81,27 @@ __attribute__((naked)) void SVCall_Handler(void) {
     __asm volatile ("B SVC_Handler_C");
 }
 
-void SVC_Handler_C(unsigned int * svc_args) {
-    uint8_t svc_number;
-    uint32_t stacked_r[5], lr, pc, xpsr;
+void SVC_Handler_C(uint32_t * svc_args) {
+    // uint8_t svc_number;
+    // uint32_t stacked_r[5], lr, pc, xpsr;
 
-    // Stack frame contains:
-    // r0, r1, r2, r3, r12, r14, the return address and xPSR
-    // __asm volatile ("BKPT 5");
-    stacked_r[0] = svc_args[0];
-    stacked_r[1] = svc_args[1];
-    stacked_r[2] = svc_args[2];
-    stacked_r[3] = svc_args[3];
+    // // Stack frame contains:
+    // // r0, r1, r2, r3, r12, r14, the return address and xPSR
+    // // __asm volatile ("BKPT 5");
+    // stacked_r[0] = svc_args[0];
+    // stacked_r[1] = svc_args[1];
+    // stacked_r[2] = svc_args[2];
+    // stacked_r[3] = svc_args[3];
 
-    stacked_r[4] = svc_args[4];
+    // stacked_r[4] = svc_args[4];
 
-    lr = svc_args[5];
-    pc = svc_args[6];
-    xpsr = svc_args[7];
+    // lr = svc_args[5];
+    // pc = svc_args[6];
+    // xpsr = svc_args[7];
 
-    svc_number = ((char *) pc)[-2]; //Memory[(Stacked PC)-2]
-    __asm volatile("PUSH {LR}");
-    syscall(svc_number);
+    // svc_number = ((char *) pc)[-2]; //Memory[(Stacked PC)-2]
+    // __asm volatile("PUSH {LR}");
+    syscall(svc_args);
 
-    __asm volatile("POP {LR}");
+    // __asm volatile("POP {LR}");
 }

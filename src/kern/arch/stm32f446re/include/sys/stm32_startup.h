@@ -52,7 +52,7 @@ volatile uint32_t _bss_size=0;
 volatile uint32_t _data_size=0;
 volatile uint32_t _text_size=0;
 
-void SVC_Handler_C(unsigned int * svc_args);
+void SVC_Handler_C(uint32_t * svc_args);
 
 void Reset_Handler(void) __attribute__((weak));
 void NMI_Handler(void) __attribute__((weak, alias("Default_Handler")));

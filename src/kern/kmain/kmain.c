@@ -22,113 +22,83 @@
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, W OTHERWISE) ARISIHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE ORNG IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+
  */
  
-
 #include <kmain.h>
+#include <dev_table.h>
 #include <schedule.h>
-#define STOP 10000000
 
-TCB_TypeDef task[10], _sleep;
-int global_count = 0;
+//includes for svc and pendsvc
+#include <syscall.h>
+#include <syscall_def.h>
 
-void task_sleep(void) {
-    int reboot_ = 0;
-    uprintf("\n\r\n\rAll tasks has been completed.\n\r\n\r\tEnter 1 to reboot the system. \n\r\tEnter any other number to enter sleeping mode.\n\r");
-    uscanf("%d", &reboot_);
-    if(reboot_ == 1) reboot();
-    
-    uprintf("Entering sleep mode...\n\r");
-    while(1);
+
+void print_device_list(){
+	kprintf("\n\n______________________\n\n");
+	for (int i = 0;i < device_count;i++){
+		kprintf("device name = %s\n",device_list[i].name);
+		kprintf("device t_ref = %d\n",device_list[i].t_ref);
+		kprintf("device t_access = %d\n",device_list[i].t_access);
+		kprintf("device t_addr = %x\n",device_list[i].t_addr);
+		kprintf("\n");
+	}
 }
 
-void task1(void) {
-    uint32_t value;
-    uint32_t inc_count=0;
-    while(1) {
-        //critical region
-        value=global_count;
-        value++;
+void SVC_Tester(void){
+	// test scanf
+	char *data = "whatever";
+	read(0,&data,5);
+	kprintf("scanned data = %s\n",data);
 
-        //we check if some other tasks increase the count
-        if(value != global_count+1) {
-            uprintf("Error %d != %d\n\r",value,global_count+1); /* It is an SVC call*/
-        } 
-        else {
-            //critical region
-            global_count=value;
-            inc_count++;
-        }
-        if(global_count >= STOP) {
-            uint16_t task_id = getpid(); /* It is an SVC call*/
-            // /* display how many increments it has successfully done!! */
-            uprintf("Total increment done by task %d is: %d\n\r",task_id,inc_count);
-            // uprintf("Total increment done by task is: %d\n\r",inc_count);
-            /* above is an SVC call */
-            break;
-        }
-    }
-    exit();
+	
+	//test fopen and fclose
+	char *device_name = "GPIOA";
+	uint8_t t_access = 0;
+	uint32_t* t_addr = (uint32_t *)GPIOA;
+	fopen(device_name,t_access,t_addr);
+	print_device_list();
+
+	fclose(t_addr);
+	print_device_list();
 }
 
-void task2(void) {
-    uint32_t value;
-    uint32_t inc_count=0;
-    while(1) {
-        //critical region
-        value=global_count;
-        value++;
-        //we check if some other tasks increase the count
-        if(value != global_count+1) {
-            uprintf("Error %d != %d\n\r",value,global_count+1); /* It is an SVC call*/
-        } 
-        else {
-            //critical region
-            global_count=value;
-            inc_count++;
-        }
-        if(global_count >= STOP){
-            uint16_t task_id = getpid(); /* It is an SVC call*/
-            // /* display how many increments it has successfully done!! */
-            uprintf("Total increment done by task %d is: %d\n\r",task_id,inc_count);
-            // uprintf("Total increment done by task is: %d\n\r",inc_count);
-            /* above is an SVC call */
-            break;
-        }
-    }
-    exit();
+//-------------global----------------
+#define STOP 		1000000
+#define TASK_COUNT 	3
+TCB_TypeDef __task[MAX_TASKS], __sleep;
+
+uint32_t GLOBAL_COUNT = 0;
+void task_1(void){
+	uint32_t value;
+	uint32_t inc_count=0;
+	uint32_t pid = getpid();
+	kprintf("___________________Task %d___________________\n",pid-1);
+	while(1){
+		value = GLOBAL_COUNT;
+		value++;
+		if(value != GLOBAL_COUNT+1){ //we check is someother task(s) increase the count
+			kprintf("Error %d != %d\n\r",value,GLOBAL_COUNT+1); /* It is an SVC call*/
+		} else{
+			GLOBAL_COUNT=value;
+			inc_count++;
+		}
+		if(GLOBAL_COUNT >= STOP){
+			kprintf("Total increment done by task %d is: %d\n\r",pid,inc_count);
+			break;
+		}
+	}
+	// task_exit();
+
 }
 
-void task3(void) {
-    uint32_t value;
-    uint32_t inc_count=0;
-    while(1) {
-        //critical region
-        value=global_count;
-        value++;
-        if(value != global_count+1) { 
-            //we check is someother task(s) increase the count
-            uprintf("Error %d != %d\n\r",value,global_count+1); /* It is an SVC call*/
-        } 
-        else {
-            //critical region
-            global_count=value;
-            inc_count++;
-        }
-        if(global_count >= STOP) {
-            uint16_t task_id = getpid(); /* It is an SVC call*/
-            /* display how many increments it has successfully done!! */
-            uprintf("Total increment done by task %d is: %d\n\r",task_id,inc_count);
-            // uprintf("Total increment done by task is: %d\n\r",inc_count);
-            /* above is an SVC call */
-            break;
-        }
-    }
-    exit();
+void sleep_state(void){
+	kprintf("Sleeping\n");
+	while(1);
 }
 
 void unprivileged_mode (void) {
@@ -139,40 +109,35 @@ void unprivileged_mode (void) {
     __asm volatile ("MSR CONTROL, R0");
 }
 
-void __set_interrupt_priorities(void) {
-    __NVIC_SetPriority(SVCall_IRQn, 1);
-    __NVIC_SetPriority(SysTick_IRQn, 0x2);
-    // lowest priority given to PendSV
-    __NVIC_SetPriority(PendSV_IRQn, 0xFF);
-}
 
-void kmain(void) {
-    __sys_init();
-    __set_interrupt_priorities();
+void kmain(void){
+	__sys_init();
 
-    // Creating three tasks to modify a global variable count and a sleep task to make the system sleep
-    task_create(task, task1, (uint32_t*)TASK_STACK_START);
-    task_create(task + 1, task2, (uint32_t*)(TASK_STACK_START - TASK_STACK_SIZE) );
-    task_create(task + 2, task3, (uint32_t*)(TASK_STACK_START - (2 * TASK_STACK_SIZE) ) );
-    task_create(&_sleep, task_sleep, (uint32_t*)(TASK_STACK_START - (3 * TASK_STACK_SIZE) ));
+	__NVIC_SetPriority(SVCall_IRQn, 1);
+	__NVIC_SetPriority(SysTick_IRQn, 0x2);
+	__NVIC_SetPriority(PendSV_IRQn, 0xFF); 
 
-    //initializing queue
-    initialize_queue();
+	init_queue();
+	
+	for(int i = 0;i < TASK_COUNT;i++){
+		__create_task(__task + i,task_1,(uint32_t*)TASK_STACK_START - i * TASK_STACK_SIZE);
+		queue_add(__task + i);
+	}
+	
+	__create_task(&__sleep,sleep_state,(uint32_t*)TASK_STACK_START - TASK_COUNT * TASK_STACK_SIZE);
+	__set_sleep(&__sleep);
+		
 
-    //adding tasks to queue
-    add_to_ready_queue(task);
-    add_to_ready_queue(task + 1);
-    add_to_ready_queue(task + 2);
-    set_sleeping_task(&_sleep);
 
-    //going to user mode
-    unprivileged_mode();
-    //set pendsv before starting task
-    set_task_pending(1);
+	set_task_pending(1);
+	unprivileged_mode();
+	start_exec();
+	kprintf("___________TASKS DONE___________\n");
 
-    task_start();
-    uprintf("\n\r\tAll Tasks Done!!!\n\r");
+	// __init_dev_table();
+	while(1) {
+        // SVC_Tester();
+    };
 
-    while(1);
 }
 

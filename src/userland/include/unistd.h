@@ -30,28 +30,16 @@
  
 #ifndef __UNISTD_H
 #define __UNISTD_H
-
-#include <kunistd.h>
-
-#include <kstdio.h>
-#include <stm32_peps.h>
-#include <usart.h>
-#include <kstring.h>
-#include <types.h>
+#include <stdint.h>
 /* Basic input and output function */
-
-
-int write(uint32_t fd, unsigned char *s, size_t len);
-int uprintf(char *format, ...);
-
-int read(uint32_t fd, unsigned char *s, size_t len);
-int uscanf(char *format, ...);
-
+void fopen(char *name,uint8_t t_access, uint32_t *t_addr);
+void fclose(uint32_t *t_addr);
 void reboot(void);
-int get_time(void);
-void exit(void);
-void yield(void);
-
-uint16_t getpid(void);
-
+void read(uint8_t fd,char **data,uint32_t size);
+void write(uint8_t fd,char *data);
+void task_exit(void);
+void yeild(void);
+uint32_t getpid(void);
+void start_task(uint32_t psp);
+uint32_t get_time(void);
 #endif
