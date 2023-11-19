@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 
+ * Copyright (c) 2022
  * Computer Science and Engineering, University of Dhaka
  * Credit: CSE Batch 25 (starter) and Prof. Mosaddek Tushar
  *
@@ -27,10 +27,21 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
- 
+
 #ifndef _SYSCALL_H
 #define _SYSCALL_H
 #include <stdint.h>
-void syscall(uint16_t);
-#endif
 
+void syscall(uint16_t);
+
+void __sys_getpid(void);
+void __sys_exit(void);
+void __sys_read(void);
+void __sys_write(void);
+void __sys_open(void);
+void __sys_close(void);
+void __sys_gettime(void);
+void __sys_reboot(void);
+void __sys_yield(void);
+
+#endif

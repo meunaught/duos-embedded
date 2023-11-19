@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 
+ * Copyright (c) 2022
  * Computer Science and Engineering, University of Dhaka
  * Credit: CSE Batch 25 (starter) and Prof. Mosaddek Tushar
  *
@@ -27,9 +27,35 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
- 
+
 #ifndef __UNISTD_H
 #define __UNISTD_H
+
+#include <kunistd.h>
+
+#include <kstdio.h>
+#include <stm32_peps.h>
+#include <usart.h>
+#include <kstring.h>
+#include <types.h>
 /* Basic input and output function */
+
+int write(uint32_t fd, unsigned char *s, size_t len);
+int printf(char *format, ...);
+
+int read(uint32_t fd, unsigned char *s, size_t len);
+int uscanf(char *format, ...);
+
+int fopen(unsigned char *s, uint32_t fd);
+int fclose(uint32_t fd);
+
+void reboot(void);
+int get_time(void);
+void exit(void);
+void yield(void);
+
+int fprintf(int fd, char *format, ...);
+
+TCB_TypeDef getpid(void);
 
 #endif

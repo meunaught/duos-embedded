@@ -35,6 +35,8 @@
 
 void kprintf(char*,...); 
 void kscanf(char*,...);
-uint8_t strcomp(uint8_t*,uint8_t*);
+char *kstrcpy(char *destination, unsigned char *source);
+int kstrcmp(char *str1, unsigned char *str2);
+
 #endif /* KSTDIO */
 

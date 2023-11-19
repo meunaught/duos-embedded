@@ -29,6 +29,7 @@
  */
  
 #include <usart.h>
+#include <kstdio.h>
 void DRV_USART_INIT(USART_TypeDef* usart)
 {	
 	/*****Modify according to your need *****/
@@ -66,9 +67,14 @@ void UART_SendChar(USART_TypeDef *usart,uint8_t c){
 	while(!(usart->SR & (1<<7)));
 }
 /*****Modify according to your need *****/
-void _USART_WRITE(USART_TypeDef *usart,uint8_t *s)
+int _USART_WRITE(USART_TypeDef *usart,uint8_t *s)
 {
-	while (*s) UART_SendChar(usart,*s++);
+	int len = 0;
+	while (*s) {
+		UART_SendChar(usart,*s++);
+		len++;
+	}
+	return len;
 }
 /*****Modify according to your need *****/
 uint8_t _USART_READ(USART_TypeDef* usart,uint8_t *buff,uint16_t size)
@@ -97,7 +103,8 @@ uint8_t _USART_READ_STR(USART_TypeDef* usart,uint8_t *buff,uint16_t size)
 	for(uint8_t i=0;i<size;i++){
 		buff[i]=UART_GetChar(usart);
 		n=i;
-		if(buff[i]=='\0' || buff[i] == '\n' || buff[i] == ' ')
+		// if(buff[i]=='\0' || buff[i] == '\n' || buff[i] == ' ')
+		if(buff[i]=='\0' || buff[i] == '\n' || buff[i] == '\r')
 		{ 	
 			buff[i]='\0';
 			break;
