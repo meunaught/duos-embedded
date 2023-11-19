@@ -137,68 +137,30 @@ void task_create(TCB_TypeDef *tcb, void (*task_func)(void), uint32_t *stack)
     }
 }
 
+int s = 0;
+int q = 0;
 void contextSwitch(void)
 {
 
-    if (policey == 0)
+    t1 = __getTime();
+
+    if (current->status == RUNNING)
     {
-        int index = current->task_id - 1000;
-
-        // int condition = 1; // RR
-
-        int isFinished = (end_task[index]); // P
-
-        if (isFinished)
-        {
-            if (current->status == RUNNING)
-            {
-                current->status = READY;
-                add_to_ready_queue(current);
-            }
-        }
-        t2 = __getTime();
-        current->execution_time_t += t2 - t1;
-        current->turn_time = t2 - current->start_time_t;
-        t1 = t2;
-        if (isFinished)
-        {
-
-            TCB_TypeDef *qf;
-
-            qf = ready_queue_front_();
-            current = qf;
-            current->status = RUNNING;
-            current->waiting_time_t += t1 - current->start_time_t;
-        }
+        current->status = READY;
+        current->prev_ready_time = t1;
+        add_to_ready_queue(current);
     }
-    else if (policey == 1)
+    if (end_task[current->task_id - 1000] == 1)
     {
-        t1 = __getTime();
-
-        if (current->status == RUNNING)
-        {
-            current->status = READY;
-            current->prev_ready_time = t1;
-            add_to_ready_queue(current);
-        }
-        if (end_task[current->task_id - 1000] == 1)
-        {
-            kprintf("Task %d is finished\n\r", current->turn_time);
-            current->execution_time_t = current->turn_time - current->waiting_time_t;
-        }
-        TCB_TypeDef *qf = ready_queue_front_();
-        current = qf;
-        current->status = RUNNING;
-        current->waiting_time_t += t1 - current->prev_ready_time;
+        kprintf("Task %d is finished\n\r", current->task_id);
+        current->execution_time_t = current->turn_time - current->waiting_time_t;
     }
-    // return;
-    // }
+    TCB_TypeDef *qf = ready_queue_front_();
+    current = qf;
+    current->status = RUNNING;
 
-    // if (index != task_count)
-    //     kprintf("Task %d\n", current->task_id);
-
-    // if (current->reponse_time_t == 0)
-    // current->reponse_time_t = t2;
+    // sem_deadlock(&s, &q);
+    current->waiting_time_t += t1 - current->prev_ready_time;
 
     return;
 }

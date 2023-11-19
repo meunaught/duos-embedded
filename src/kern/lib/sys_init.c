@@ -50,7 +50,7 @@ void __sys_init(void)
 	kprintf("Credit: Third Year 2022\r\n");
 	kprintf("CPUID %x\n", SCB->CPUID);
 	kprintf("OS Version: 1.0.1\n");
-	kprintf("Shamik Shafkat-10\nGalib Mahmud Jim-62\n");
+	kprintf("Mahadi-03 \nJoyee-42\n");
 	kprintf("Time Elapse %d ms\n", __getTime());
 	kprintf("Welcome ....\r\n");
 	kprintf("*************************************\r\n");
