@@ -1,4 +1,4 @@
-# Se7en-Segment-Display-DUOS
+# Embedded-OS
 > This is an example project to showcase bare-metal embedded developement on the STM32F4xxx series MCU.
 
 ## Prerequisites
