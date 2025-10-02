@@ -1,12 +1,21 @@
-# Se7en-Segment-Display-DUOS
+# Embedded-OS
 > This is an example project to showcase bare-metal embedded developement on the STM32F4xxx series MCU.
+
+## Summary
+- A minimal, educational embedded OS for STM32F446RE (Cortex-M4), featuring boot/startup code, basic drivers (GPIO, USART, clock, timer), a syscall layer, simple scheduler/multitasking experiments, and synchronization primitives. Build and flash flows are provided via Makefile with ST-Link utilities.
+
+## Branch overview
+- **main**: Stable baseline of the OS, drivers, and build/flash flow.
+- **exti**: Implement external interrupts (EXTI) and fault diagnostics; includes test harness and startup/USART updates.
+- **multitasking**: Provide a basic scheduler and multitasking (tick, context switch), integrated with early syscalls.
+- **se7en-segment**: Demonstrate seven-segment display usage from `kmain` (simple output patterns/digits).
+- **semaphore**: Add semaphore primitives and scheduling policies (RR/FCFS) with kernel/userland integration.
+- **syscall**: Define syscall ABI and dispatcher with userland `unistd` wrappers and kernel hooks.
 
 ## Prerequisites
 
 ### Hardware
 - [STM32-Neucleo Board](https://www.st.com/en/microcontrollers-microprocessors/stm32f446re.html) 
-- [5161AS-LED-Display](https://www.jameco.com/z/LS-5161AS-Jameco-ValuePro-Red-7-Segment-LED-Display-640nm-0-56-H-Digit-Common-Cathode-Right-Hand-Decimal_2325447.html)
-- Some Jumper Wires
 
 ### Toolchain
 - Unix-like environment e.g. Linux or MacOS or Git-Bash/WSL on Windows
@@ -21,7 +30,7 @@
   apt install gcc-arm-none-eabi stlink-tools make
   ```
  
-- ### MacOS (Preferrably using [brew](https://brew.sh/))
+- ### MacOS
   ```sh
   brew install stlink
   brew install --cask gcc-arm-embedded
@@ -57,10 +66,6 @@
   make flash
   ```
 ***STlink may require superuser permission on MacOS/Linux
-## Pin Logic
-- Look at the LED-Display so that a small circle appears on your top left corner. 
-- Let's label the pins from left to right 1->2->3->4->5
-- Pin 3 from TOP or BOTTOM side should be connected to GND
 
 ## Serial Communication
 You may use [Hercules](https://www.hw-group.com/software/hercules-setup-utility), [Serial Monitor](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-serial-monitor) on VS Code or any CLI/GUI tool to send and receive data over USART. 
