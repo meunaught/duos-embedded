@@ -1,5 +1,16 @@
-# Se7en-Segment-Display-DUOS
+# Embedded-OS
 > This is an example project to showcase bare-metal embedded developement on the STM32F4xxx series MCU.
+
+## Summary
+- A minimal, educational embedded OS for STM32F446RE (Cortex-M4), featuring boot/startup code, basic drivers (GPIO, USART, clock, timer), a syscall layer, simple scheduler/multitasking experiments, and synchronization primitives. Build and flash flows are provided via Makefile with ST-Link utilities.
+
+## Branch overview
+- **main**: Stable baseline of the OS, drivers, and build/flash flow.
+- **exti**: Implement external interrupts (EXTI) and fault diagnostics; includes test harness and startup/USART updates.
+- **multitasking**: Provide a basic scheduler and multitasking (tick, context switch), integrated with early syscalls.
+- **se7en-segment**: Demonstrate seven-segment display usage from `kmain` (simple output patterns/digits).
+- **semaphore**: Add semaphore primitives and scheduling policies (RR/FCFS) with kernel/userland integration.
+- **syscall**: Define syscall ABI and dispatcher with userland `unistd` wrappers and kernel hooks.
 
 ## Prerequisites
 
